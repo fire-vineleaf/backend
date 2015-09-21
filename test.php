@@ -1,8 +1,14 @@
 <?php
 
 
-$a["hallo"] = "build triggered";
+class MoneyTest extends PHPUnit_Framework_TestCase {
 
-echo json_encode($a);
+  public function testObjectCanBeConstructedFromStringValue()
+    {
+        $this->assertEquals(true, false
+        );
+    }
+}
+
 
 ?>
