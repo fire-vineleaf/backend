@@ -4,16 +4,16 @@ $dirName = dirname(__FILE__);
 require($dirName."/gameconfig.inc.php");
 
 /* core */
-require($dirName."/Core/BaseManager.php");
-require($dirName."/Core/SecurityManager.php");
+require($dirName."/core/BaseManager.php");
+require($dirName."/core/SecurityManager.php");
 
-require($dirName."/Core/repository.php");
-require($dirName."/Core/model.php");
+require($dirName."/core/repository.php");
+require($dirName."/core/model.php");
 
-require($dirName."/Core/service.php");
-require($dirName."/Core/ZSAService.php");
+require($dirName."/core/service.php");
+require($dirName."/core/ZSAService.php");
 
 /* REST API */
-require($dirName."/WebApi/ZSAApiController.php");
+require($dirName."/webapi/ZSAApiController.php");
 
 ?>
