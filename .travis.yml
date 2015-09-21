@@ -1,9 +1,26 @@
+language: php
+php:
+  - 5.4
+  - 5.5
+  - 5.6
+  - hhvm
+script: phpunit test.php
+
 deploy:
   provider: openshift
+  skip_cleanup: true
+  clean_up: false
   user: oberon.boege@gmail.com
   password:
     secure: a4dNEMgvsgzel6TERzpIiSOr0SiD0ab4fy6aHZs9OwH9AXTIj4K9XDOUqsB8tUfdMMmNfomLArnecLYGcXlUd5gQHFR1cfFWRn8cK8meLqRVeVnr8C7+iGxWx1r6WaT2y4dYEoimpO5aKloHguDTPHg03ksqlqVoWdECKDtY0s1LAy0rsBKzCIVnezY9A+mCGqnghDYXEJUfh0ZNZHnCnfQ0r9QqZupLhxC25pF15vIbEGPWY0Xbds+x4gcgoDqJrwgYZd58S0ykd1BVl9KmMZdPcJlufqEz5UDo4caD3LPBM8mV6xAfbTL5VpLVL7ANIXyHCykryxRbpQB4BJCP9PyAoPP9Tw8bDNjFLmGpfU2V70/iK5jjHbtjl6z+99o639FrtEHRM4pcYSo2udbc5TCdk5UzW4c8iXuN6iaPM6ra8MlGJQkXAyhEk0sN7bU5qoCzHJW4/OlTuvGM97a3l0V1WF8wHXyW/4QzxDB44SNeg7N76zEbTBYSlY8PSsRYCl45JUlzs47a4Al7dNzW257OcPNLnjS/q/RWsDWj8GbPmNq3cKWFw2cqar9kxFzGRfEYG5GqyCC5LX/8aVXk1KtGRWqZWBrtgKvqk+dI1Cqhivyn+ZUv3TITfvRvvb1tkkE/gZIVjLDNAgkfd+hggJC5Esri/dDDPR+05HoBSCQ=
-  app: backend
+  app: php
   domain: vineleaf
   on:
     repo: fire-vineleaf/backend
+    branch: master
+  deployment_branch: master
+after_success:
+- git config --global user.email "travis@localhost.localdomain"
+- git config --global user.name "Travis CI"
+- git add --all
+- git commit -am "Travis change"
