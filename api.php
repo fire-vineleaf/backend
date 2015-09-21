@@ -1,5 +1,5 @@
 <?php
-error_reporting ( 0 );
+error_reporting ( E_ALL );
 
 
 register_shutdown_function("fatal_handler");
@@ -14,7 +14,6 @@ function fatal_handler() {
 	}	
 }
 
-error_reporting ( E_ALL );
 
 require ("config.inc.php.conf");
 require("includes.inc.php");
