@@ -63,7 +63,7 @@ if ($cfgIsCouch) {
 	$username = "343";
 	$repository = new CouchRepository($cfgCouchHost);
 } else {
-	$repository = new MySqlRepository($cfgMySqlHost, $cfgMySqlUserName, $cfgMySqlPassword, $cfgMySqlDatabase);
+	$repository = new MySqlRepository($cfgMySqlHost, $cfgMySqlUserName, $cfgMySqlPassword, $cfgMySqlDatabase, $cfgMySqlPort);
 }
 
 $securityManager = new SecurityManager($repository);
