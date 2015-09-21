@@ -1,7 +1,7 @@
 <?php
 
 
-$a["hallo"] = "was geht";
+$a["hallo"] = "build triggered";
 
 echo json_encode($a);
 
