@@ -3,14 +3,14 @@
  * Base class WebApi
  */
 class BaseWebApiController {
-	public $contextUser;
+	public $contextPlayer;
 	public $mySqlRepository;
 	public $config;	
 }
 class ZSAApiController extends BaseWebApiController {
 
 	private function getZSAService() {
-		$service = new ZSAService($this->contextUser, $this->repository);
+		$service = new ZSAService($this->contextPlayer, $this->repository);
 		$service->config = $this->config;
 		return $service;
 	}
@@ -35,7 +35,7 @@ class ZSAApiController extends BaseWebApiController {
 	
 	public function getCamp($parameters) {
 		$id = $parameters["id"];
-		$service = new ZSAService($this->contextUser, $this->repository);		
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
 		$camp = $service->getCamp($id);
 		return $camp;
 	}
@@ -44,51 +44,51 @@ class ZSAApiController extends BaseWebApiController {
 		$body = file_get_contents('php://input');
 
 		$clan = Clan::createModelFromJson($body);
-		$service = new ZSAService($this->contextUser, $this->repository);
+		$service = new ZSAService($this->contextPlayer, $this->repository);
 		$clan = $service->createClan($clan);
 		return $clan;
 	}
 
 	public function getClanMembers($parameters) {
 		$id = $parameters["id"];
-		$service = new ZSAService($this->contextUser, $this->repository);		
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
 		$members = $service->getclanMembers($id);
 		return $members;
 	}
 
 	public function leaveClan() {
-		$service = new ZSAService($this->contextUser, $this->repository);		
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
 		$service->leaveClan();
 	}
 	
 	public function disbandClan() {
-		$service = new ZSAService($this->contextUser, $this->repository);		
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
 		$service->disbandClan();
 	}
 
 	public function inviteUser($parameters) {
 		$id = $parameters["id"];
-		$service = new ZSAService($this->contextUser, $this->repository);		
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
 		$invitation = $service->inviteUser($id);
 		return $invitation;
 	}
 	
 	public function applyForClan($parameters) {
 		$id = $parameters["id"];
-		$service = new ZSAService($this->contextUser, $this->repository);		
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
 		$invitation = $service->applyForClan($id);
 		return $invitation;
 	}
 	
 	public function acceptInvitation($parameters) {
 		$id = $parameters["id"];
-		$service = new ZSAService($this->contextUser, $this->repository);		
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
 		$service->acceptInvitation($id);
 	}
 	
 	public function rejectInvitation($parameters) {
 		$id = $parameters["id"];
-		$service = new ZSAService($this->contextUser, $this->repository);		
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
 		$service->rejectInvitation($id);
 	}
 	
@@ -96,7 +96,7 @@ class ZSAApiController extends BaseWebApiController {
 		$id = $parameters["id"];
 		$body = file_get_contents('php://input');
 		$right = Right::createModelFromJson($body);
-		$service = new ZSAService($this->contextUser, $this->repository);		
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
 		$service->grantRight($id, $right);
 	}
 
@@ -104,14 +104,14 @@ class ZSAApiController extends BaseWebApiController {
 		$id = $parameters["id"];
 		$body = file_get_contents('php://input');
 		$right = Right::createModelFromJson($body);
-		$service = new ZSAService($this->contextUser, $this->repository);		
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
 		$service->revokeRight($id, $right);
 	}
 	
 	public function createThread() {
 		$body = file_get_contents('php://input');
 		$thread = Thread::createModelFromJson($body);
-		$service = new ZSAService($this->contextUser, $this->repository);		
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
 		$thread = $service->createThread($thread);
 		return $thread;
 	}
@@ -120,7 +120,7 @@ class ZSAApiController extends BaseWebApiController {
 		$id = $parameters["id"];
 		$body = file_get_contents('php://input');
 		$post = Post::createModelFromJson($body);
-		$service = new ZSAService($this->contextUser, $this->repository);		
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
 		$post = $service->createPost($id, $post);
 		return $post;
 	}
@@ -128,7 +128,7 @@ class ZSAApiController extends BaseWebApiController {
 	public function createMessage() {
 		$body = file_get_contents('php://input');
 		$message = Message::createModelFromJson($body);
-		$service = new ZSAService($this->contextUser, $this->repository);		
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
 		$message = $service->createMessage($message);
 		return $message;
 	}
@@ -137,7 +137,7 @@ class ZSAApiController extends BaseWebApiController {
 		$id = $parameters["id"];
 		$body = file_get_contents('php://input');
 		$reply = Reply::createModelFromJson($body);
-		$service = new ZSAService($this->contextUser, $this->repository);		
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
 		$reply = $service->replyToMessage($id, $reply);
 		$reply->reply = ""; // delete reply to keep response small, reply is not needed in this case
 		return $reply;
@@ -145,26 +145,26 @@ class ZSAApiController extends BaseWebApiController {
 
 	public function deleteMessage($parameters) {
 		$id = $parameters["id"];
-		$service = new ZSAService($this->contextUser, $this->repository);		
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
 		$service->deleteMessage($id);
 	}
 	
 	public function getMessages() {
-		$service = new ZSAService($this->contextUser, $this->repository);		
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
 		$messages = $service->getMessages();
 		return $messages;
 	}
 	
 	public function getMessage($parameters) {
 		$id = $parameters["id"];
-		$service = new ZSAService($this->contextUser, $this->repository);		
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
 		$message = $service->getMessage($id);
 		return $message;
 	}
 	
 	public function getReplies($parameters) {
 		$id = $parameters["id"];
-		$service = new ZSAService($this->contextUser, $this->repository);		
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
 		$replies = $service->getReplies($id);
 		return $replies;
 	}

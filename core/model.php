@@ -527,7 +527,7 @@ class Message extends BaseModel {
 	public $participants = array();
 	
 	public $content;
-	public $createdByUser;
+	public $createdByPlayer;
 	
 	
 	public static function createModelFromRepositoryArray($array) {	
@@ -587,34 +587,35 @@ class Invitation extends BaseModel  {
 	public $clanId;
 	public $type;
 }
-class UserInfo extends BaseModel {
-	public $userId;
-	public $displayName;
-	public $scores;
+class PlayerInfo extends BaseModel {
+	public $playerId;
+	public $name;
+	public $points;
 	
 	public static function createModelFromRepositoryArray($array) {	
-		$userInfo = new UserInfo();
-		$userInfo->userId = $array["userId"];
-		$userInfo->displayName = $array["displayName"];
-		$userInfo->scores = $array["scores"];
-		return $userInfo;
+		$info = new PlayerInfo();
+		$info->playerId = $array["playerId"];
+		$info->name = $array["name"];
+		$info->points = $array["points"];
+		return $info;
 	}
 }
-class User extends BaseModel {
-	public $userId;
-	public $name;
-	public $wikiName;
-	public $createdAt;
+class Account extends BaseModel {
+	public $accountId;
 	public $password;
 	public $email;
-	public $displayName;
-	public $points;
-	public $isConfirmed;
-	public $confirmationKey;
-	public $clanId;
-	public $rights;
-	
+	public $createdAt;
+	public $playerId;
 }
+
+class Player extends BaseModel {
+	public $playerId;
+	public $name;
+	public $points;
+	public $clanId;
+	public $rights;	
+}
+
 
 class Right extends BaseModel {
 	public $right;

@@ -10,7 +10,6 @@ require($dirName."/core/SecurityManager.php");
 require($dirName."/core/repository.php");
 require($dirName."/core/model.php");
 
-require($dirName."/core/service.php");
 require($dirName."/core/ZSAService.php");
 
 /* REST API */

@@ -1,10 +1,39 @@
 <?php
 
-class CampBuilding {
-	public $name;
-	public $level;
-	public $type;
-	public $numPersons;
+class BaseService {
+	/**
+	 * 
+	 * @var Player
+	 */
+	protected $contextPlayer;
+
+	protected $repository;
+	
+	/**
+	 * security manager
+	 * @var SecurityManager
+	 */
+	protected $securityManager;
+
+	public $config;
+	
+	function __construct($contextPlayer, $repository) {
+		$this->contextPlayer = $contextPlayer;
+		$this->repository = $repository;
+		$this->securityManager = new SecurityManager($repository);
+	}
+	
+	
+	/**
+	 * checks if an object has been found
+	 * raises notfoundexception
+	 */
+	public function checkIsFound($object) {
+		if (is_null($object)) {
+			throw new NotFoundException("Object not found");
+		}
+	}
+	
 }
 
 class ZSAService extends BaseService {
@@ -15,21 +44,21 @@ class ZSAService extends BaseService {
 		return $camp;
 	}
 
-	public function getCamps($userId) {
-	if (is_null($userId)) {
+	public function getCamps($playerId) {
+	if (is_null($playerId)) {
 		return $this->getOwnCamps();
 	} else {
-		return $this->getUserCamps($userId);
+		return $this->getPlayerCamps($playerId);
 	}
 	}
 
 	public function getOwnCamps() {
-		return $this->getUserCamps($this->contextUser->userId);
+		return $this->getPlayerCamps($this->contextPlayer->playerId);
 	}
 
 	
-	private function getUserCamps($userId) {
-		$camps = $this->repository->getUserCamps($userId);
+	private function getPlayerCamps($playerId) {
+		$camps = $this->repository->getPlayerCamps($playerId);
 		return $camps;
 	}
 
@@ -63,10 +92,10 @@ class ZSAService extends BaseService {
 	 */
 	public function createClan($clan) {
 		$clan = $this->repository->createClan($clan);
-		$user = new User();
-		$user = $this->contextUser;
-		$user->clanId = $clan->clanId;
-		$user->rights = 
+		$player = new Player();
+		$player = $this->contextPlayer;
+		$player->clanId = $clan->clanId;
+		$player->rights = 
 			Rights::_INVITE
 			| Rights::_MASSMAIL
 			| Rights::_MODERATOR
@@ -74,8 +103,8 @@ class ZSAService extends BaseService {
 			| Rights::_DISMISS
 			| Rights::_RIGHTS
 			| Rights::_DISBAND;
-		$user = $this->repository->updateUserClan($user);
-		$user = $this->repository->updateUserRights($user);
+		$player = $this->repository->updatePlayerClan($player);
+		$player = $this->repository->updatePlayerRights($player);
 			
 		$item = $this->createFeedItem(FeedItemTypes::CreatedClan);
 		$item->payload = "todo: payload"; // todo: payload
@@ -85,7 +114,7 @@ class ZSAService extends BaseService {
 	}
 	
 	public function leaveClan() {
-		$this->removeUserFromClan($this->contextUser);
+		$this->removePlayerFromClan($this->contextPlayer);
 		$item = $this->createFeedItem(FeedItemTypes::InvitationAccepted);
 		$item->payload = "todo: payload"; // todo: payload
 		$this->repository->createFeedItem($item);
@@ -96,27 +125,27 @@ class ZSAService extends BaseService {
 	}
 	
 	public function disbandClan() {
-		$clanId = $this->contextUser->clanId;
+		$clanId = $this->contextPlayer->clanId;
 		$members = $this->repository->getClanMembers($clanId);
 		foreach($members as $member) {
-			$this->removeUserFromClan($member);
+			$this->removePlayerFromClan($member);
 		}
 		$this->repository->deleteClan($clanId);
 	}
 	
-	private function removeUserFromClan($user) {
-		$user->clanId = null;
-		$user->rights = 0;
-		$this->repository->updateUserClan($user);
-		$this->repository->updateUserRights($user);
+	private function removePlayerFromClan($player) {
+		$player->clanId = null;
+		$player->rights = 0;
+		$this->repository->updatePlayerClan($player);
+		$this->repository->updatePlayerRights($player);
 	}
 	
-	public function inviteUser($userId) {
+	public function invitePlayer($playerId) {
 		$invitation = new Invitation();
 		$invitation->createdAt = time();
-		$invitation->createdBy = $this->contextUser->userId;
-		$invitation->clanId = $this->contextUser->clanId;
-		$invitation->userId = $userId;
+		$invitation->createdBy = $this->contextPlayer->playerId;
+		$invitation->clanId = $this->contextPlayer->clanId;
+		$invitation->playerId = $playerId;
 		$invitation->type = InvitationTypes::Invitation;
 		$invitation = $this->repository->createInvitation($invitation);
 
@@ -129,9 +158,9 @@ class ZSAService extends BaseService {
 	public function applyForClan($clanId) {
 		$invitation = new Invitation();
 		$invitation->createdAt = time();
-		$invitation->createdBy = $this->contextUser->userId;
+		$invitation->createdBy = $this->contextPlayer->playerId;
 		$invitation->clanId = $clanId;
-		$invitation->userId = $this->contextUser->userId;
+		$invitation->playerId = $this->contextPlayer->playerId;
 		$invitation->type = InvitationTypes::Application;
 		$invitation = $this->repository->createInvitation($invitation);
 
@@ -144,11 +173,11 @@ class ZSAService extends BaseService {
 	public function acceptInvitation($invitationId) {
 		$invitation = $this->repository->getInvitationById($invitationId);
 		$this->checkIsFound($invitation);
-		$user = $this->repository->getUserById($invitation->userId);
-		$user->clanId = $invitation->clanId;
-		$user->rights = 0;
-		$user = $this->repository->updateUserClan($user);
-		$user = $this->repository->updateUserRights($user);
+		$player = $this->repository->getPlayerById($invitation->playerId);
+		$player->clanId = $invitation->clanId;
+		$player->rights = 0;
+		$player = $this->repository->updatePlayerClan($player);
+		$player = $this->repository->updatePlayerRights($player);
 
 		$this->repository->deleteInvitation($invitationId);
 		$item = $this->createFeedItem(FeedItemTypes::InvitationAccepted);
@@ -163,21 +192,21 @@ class ZSAService extends BaseService {
 		$this->repository->createFeedItem($item);
 	}
 
-	public function grantRight($userId, $right) {
-		$user = $this->repository->getUserById($userId);
-		$this->checkIsFound($user);
-		$user->rights |= $right->right;
-		$user = $this->repository->updateUserRights($user);
+	public function grantRight($playerId, $right) {
+		$player = $this->repository->getPlayerById($playerId);
+		$this->checkIsFound($player);
+		$player->rights |= $right->right;
+		$player = $this->repository->updatePlayerRights($player);
 		$item = $this->createFeedItem(FeedItemTypes::RightGranted);
 		$item->payload = "todo: payload"; // todo: payload
 		$this->repository->createFeedItem($item);
 	}
 	
-	public function revokeRight($userId, $right) {
-		$user = $this->repository->getUserById($userId);
-		$this->checkIsFound($user);
-		$user->rights &= ~$right->right;
-		$user = $this->repository->updateUserRights($user);
+	public function revokeRight($playerId, $right) {
+		$player = $this->repository->getPlayerById($playerId);
+		$this->checkIsFound($player);
+		$player->rights &= ~$right->right;
+		$player = $this->repository->updatePlayerRights($player);
 		$item = $this->createFeedItem(FeedItemTypes::RightRevoked);
 		$item->payload = "todo: payload"; // todo: payload
 		$this->repository->createFeedItem($item);
@@ -188,11 +217,11 @@ class ZSAService extends BaseService {
 	private function createFeedItem($type) {
 		$item = new FeedItem();
 		$item->createdAt = time();
-		$item->createdBy = $this->contextUser->userId;
+		$item->createdBy = $this->contextPlayer->playerId;
 		if ($type >=50) {
-			$item->userId = $this->contextUser->userId;
+			$item->playerId = $this->contextPlayer->playerId;
 		} else {
-			$item->clanId = $this->contextUser->clanId;
+			$item->clanId = $this->contextPlayer->clanId;
 		}
 		$item->type = $type;
 		$item->payload = "";
@@ -201,11 +230,11 @@ class ZSAService extends BaseService {
 	
 	
 	/**
-	 * updates clan of a user
-	 * @param User $user
+	 * updates clan of a player
+	 * @param Player $player
 	 */
-	public function updateUserClan($user) {
-		$this->repository->updateUserClan($user);
+	public function updatePlayerClan($player) {
+		$this->repository->updatePlayerClan($player);
 	}
 
 	/**
@@ -214,13 +243,13 @@ class ZSAService extends BaseService {
 	 * @return Thread
 	 */
 	public function createThread($thread) {
-		$thread->createdBy = $this->contextUser->userId;
+		$thread->createdBy = $this->contextPlayer->playerId;
 		$thread->createdAt = time();
-		$thread->clanId = $this->contextUser->clanId;
+		$thread->clanId = $this->contextPlayer->clanId;
 		$thread = $this->repository->createThread($thread);
 		$post = new Post();
 		$post->threadId = $thread->threadId;
-		$post->createdBy = $this->contextUser->userId;
+		$post->createdBy = $this->contextPlayer->playerId;
 		$post->createdAt = time();
 		$post->content = $thread->content;
 		$post = $this->repository->createPost($post);
@@ -229,7 +258,7 @@ class ZSAService extends BaseService {
 
 	public function createPost($threadId, $post) {
 		$post->threadId = $threadId;
-		$post->createdBy = $this->contextUser->userId;
+		$post->createdBy = $this->contextPlayer->playerId;
 		$post->createdAt = time();
 		$post = $this->repository->createPost($post);
 		return $post;
@@ -237,19 +266,19 @@ class ZSAService extends BaseService {
 
 	public function createMessage($message) {
 		$message->createdAt = time();
-		$message->createdBy = $this->contextUser->userId;
+		$message->createdBy = $this->contextPlayer->playerId;
 		$message = $this->repository->createMessage($message);
 		// and don't forget to add yourself as participant!
-		$message->participants[] = $this->contextUser->userId;
-		foreach($message->participants as $userId) {
+		$message->participants[] = $this->contextPlayer->playerId;
+		foreach($message->participants as $playerId) {
 			$participant = new Participant();
-			$participant->userId = $userId;
+			$participant->playerId = $playerId;
 			$participant->messageId = $message->messageId;
 			$this->repository->createParticipant($participant);
 		}
 		$reply = new Reply();
 		$reply->createdAt = time();
-		$reply->createdBy = $this->contextUser->userId;
+		$reply->createdBy = $this->contextPlayer->playerId;
 		$reply->reply = $message->content;
 		$reply->messageId = $message->messageId;
 		$reply = $this->repository->createReply($reply);
@@ -263,7 +292,7 @@ class ZSAService extends BaseService {
 
 	public function replyToMessage($id, $reply) {
 		$reply->createdAt = time();
-		$reply->createdBy = $this->contextUser->userId;
+		$reply->createdBy = $this->contextPlayer->playerId;
 		$reply->messageId = $id;
 		$reply = $this->repository->createReply($reply);
 
@@ -277,7 +306,7 @@ class ZSAService extends BaseService {
 	}
 	
 	public function deleteMessage($messageId) {
-		$this->repository->deleteParticipant($this->contextUser->userId, $messageId);
+		$this->repository->deleteParticipant($this->contextPlayer->playerId, $messageId);
 		// check if this was the last participant
 		// if yes: delete message and all replies
 		$numParticipants = $this->repository->getNumParticipants($messageId);
@@ -288,15 +317,15 @@ class ZSAService extends BaseService {
 	}
 	
 	public function getMessages() {
-		$messages = $this->repository->getMessages($this->contextUser->userId);
+		$messages = $this->repository->getMessages($this->contextPlayer->playerId);
 		return $messages;
 	}
 	
 	public function getMessage($messageId) {
 		$message = $this->repository->getMessageById($messageId);
-		// mark message as read for this user
+		// mark message as read for this player
 		$participant = new Participant();
-		$participant->userId = $this->contextUser->userId;
+		$participant->playerId = $this->contextPlayer->playerId;
 		$participant->messageId = $messageId;
 		$participant->isRead = 1;
 		$this->repository->updateParticipant($participant);
@@ -430,7 +459,7 @@ class ZSAService extends BaseService {
 				if (!is_null($field)) {
 					$camp = new Camp();
 					$camp->name = "Abandoned Tree ".($numCamps+100);
-					$camp->userId = 1;
+					$camp->playerId = 1;
 					$camp->x = $x;
 					$camp->y = $y;
 					$camp = $this->createCamp($camp);
@@ -445,8 +474,8 @@ class ZSAService extends BaseService {
 		return $numCamps;
 	}
 	
-	public function getUser($id) {
-		return $this->repository->getUserById($id);
+	public function getPlayer($id) {
+		return $this->repository->getPlayerById($id);
 	}
 
 

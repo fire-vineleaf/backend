@@ -14,8 +14,7 @@ function fatal_handler() {
 	}	
 }
 
-
-require ("config.inc.php.conf");
+require ("config.inc.php");
 require("includes.inc.php");
 require("init.inc.php");
 
@@ -23,8 +22,14 @@ $action = $_GET["a"];
 $controller = new ZSAApiController();
 $controller->repository = $repository;
 $controller->config = $config;
-$controller->contextUser = $contextUser;
+$player = $repository->getPlayerById($contextAccount->playerId);
+if (is_null($player)) {
+	$e["error"] = "player does not exist";
+	die(json_encode($e));
+}
+$controller->contextPlayer = $player;
 
+	
 $parameters = array();
 if (isset($_SERVER["QUERY_STRING"])) {
 	$ps = explode("&", $_SERVER["QUERY_STRING"]);
@@ -37,8 +42,8 @@ $requestMethod = strtolower($_SERVER["REQUEST_METHOD"]);
 switch ($requestMethod) {
 	case "get":
 	switch ($action) {
-		case "user":
-		$method = "getUser";
+		case "player":
+		$method = "getPlayer";
 		break;
 		case "camps":
 		$method = "getCamps";
@@ -55,27 +60,92 @@ switch ($requestMethod) {
 		case "section":
 		$method = "getSection";
 		break;
+		case "members":
+		$method = "getClanMembers";
+		break;
+		case "message":
+		$method = "getMessage";
+		break;
+		case "replies":
+		$method = "getReplies";
+		break;
 		default:
-		header("HTTP/1.0 400 Bad Request");
-		$requestUri = $_SERVER["REQUEST_URI"];
-		echo "{\"error\": \"No matching route found for '".$requestUri."'\"}";
-		die();
+		invalidRoute();
 		break;
 	}
 	
 	
 	break;
 	case "post":
+	switch ($action) {
+		case "clan":
+		$method = "createClan";
+		break;
+		case "leave":
+		$method = "leaveClan";
+		break;
+		case "invite":
+		$method = "invitePlayer";
+		break;
+		case "apply":
+		$method = "applyForClan";
+		break;
+		case "accept":
+		$method = "acceptInvitation";
+		break;
+		case "reject":
+		$method = "rejectInvitation";
+		break;
+		case "right":
+		$method = "grantRight";
+		break;
+		case "thread":
+		$method = "createThread";
+		break;
+		case "post":
+		$method = "createPost";
+		break;
+		case "message":
+		$method = "createMessage";
+		break;
+		case "reply":
+		$method = "replyToMessage";
+		break;
+		case "building":
+		$method = "upgradeBuilding";
+		break;
+		default:
+		invalidRoute();
+		break;
+	}
 	break;
 	case "put":
 	break;
 	case "delete":
+	switch ($action) {
+		case "disband":
+		$method = "disbandClan";
+		break;
+		case "right":
+		$method = "revokeRight";
+		break;
+		default:
+		invalidRoute();
+		break;
+	}
 	break;
 	default:
 	die("invalid request method: $requestMethod");
 	break;
 }
 
+function invalidRoute() {
+	global $requestMethod;
+		header("HTTP/1.0 400 Bad Request");
+		$requestUri = $_SERVER["REQUEST_URI"];
+		echo "{\"error\": \"No matching route found for ".strtoupper($requestMethod)." '".$requestUri."'\"}";
+		die();
+}
 
 
 
@@ -83,6 +153,8 @@ switch ($requestMethod) {
 $httpCode = "HTTP/1.0 ";
 
 try {
+
+
 	$result = $controller->$method($parameters);
 	
 	switch($_SERVER['REQUEST_METHOD']) {

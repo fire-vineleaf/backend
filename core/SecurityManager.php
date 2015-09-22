@@ -5,17 +5,17 @@ class SecurityManager extends BaseManager {
 
 
 	/**
-	 * gets user by name
+	 * gets account by name
 	 * @param string $name
-	 * @return User
+	 * @return Account
 	 */
-	public function getUserByName($name) {
-		if ($name == "") {
-			throw new ParameterException("name is empty");
+	public function getAccountByEmail($email) {
+		if ($email == "") {
+			throw new ParameterException("email is empty");
 		}
-		$model = $this->repository->getUserByName($name);
+		$model = $this->repository->getAccountByEmail($email);
 		if (($model == null) || ($model === false)) {
-			throw new NotFoundException($name);
+			throw new NotFoundException($email);
 		}
 		return $model;
 	}
