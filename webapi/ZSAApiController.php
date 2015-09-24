@@ -4,6 +4,7 @@
  */
 class BaseWebApiController {
 	public $contextPlayer;
+	public $contextAccount;
 	public $mySqlRepository;
 	public $config;	
 }
@@ -12,26 +13,21 @@ class ZSAApiController extends BaseWebApiController {
 	private function getZSAService() {
 		$service = new ZSAService($this->contextPlayer, $this->repository);
 		$service->config = $this->config;
+		$service->contextAccount = $this->contextAccount;
 		return $service;
 	}
 
 	public function getCamps($parameters) {
+		$service = $this->getZSAService();
 		if (isset($parameters["id"])) {
 			$id = $parameters["id"];
 		} else {
-			$id = null;
+			$id=null;
 		}
-		$service = $this->getZSAService();
 		$camps = $service->getCamps($id);
 		return $camps;
 	}
 
-	public function getOwnCamps() {
-		$service = $this->getZSAService();
-		$camps = $service->getOwnCamps();
-		return $camps;
-	}
-	
 	
 	public function getCamp($parameters) {
 		$id = $parameters["id"];
@@ -50,12 +46,31 @@ class ZSAApiController extends BaseWebApiController {
 	}
 
 	public function getClanMembers($parameters) {
-		$id = $parameters["id"];
+		$id = $this->getId($parameters);
 		$service = new ZSAService($this->contextPlayer, $this->repository);		
 		$members = $service->getclanMembers($id);
 		return $members;
 	}
 
+	public function getThreads() {
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
+		$threads = $service->getThreads();
+		return $threads;
+	}
+
+	public function getLeaderboardPlayers() {
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
+		$players = $service->getLeaderBoardPlayers();
+		return $players;
+	}
+
+	public function getPosts($parameters) {
+		$id = $this->getId($parameters);
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
+		$posts = $service->getPosts($id);
+		return $posts;
+	}
+	
 	public function leaveClan() {
 		$service = new ZSAService($this->contextPlayer, $this->repository);		
 		$service->leaveClan();
@@ -155,11 +170,47 @@ class ZSAApiController extends BaseWebApiController {
 		return $messages;
 	}
 	
+	public function getInvitations() {
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
+		$invitations = $service->getOwnInvitations();
+		return $invitations;
+	}
+	
+	public function getAccount() {
+		$this->contextAccount->password = null; // security
+		return $this->contextAccount;
+	}
+
+	public function getPlayer($parameters) {
+		$id = $this->getId($parameters);
+		if (is_null($id)) {
+			return $this->contextPlayer;
+		} else {
+			$service = new ZSAService($this->contextPlayer, $this->repository);		
+			$player = $service->getPlayer($id);
+			return $player;
+		}
+	}
+	
 	public function getMessage($parameters) {
 		$id = $parameters["id"];
 		$service = new ZSAService($this->contextPlayer, $this->repository);		
 		$message = $service->getMessage($id);
 		return $message;
+	}
+
+	private function getId($parameters) {
+		if (isset($parameters["id"])) {
+			return $parameters["id"];
+		} else {
+			return null;
+		}
+	}
+	public function getClan($parameters) {
+		$id = $this->getId($parameters);
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
+		$clan = $service->getClan($id);
+		return $clan;
 	}
 	
 	public function getReplies($parameters) {
@@ -190,12 +241,6 @@ class ZSAApiController extends BaseWebApiController {
 		return $section;
 	}
 
-	public function getUser($parameters) {
-		$id = $parameters["id"];
-		$service = $this->getZSAService();
-		$user = $service->getUser($id);
-		return $user;
-	}
 }
 
 

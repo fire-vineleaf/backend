@@ -459,7 +459,7 @@ class Task extends BaseModel {
 
 class Camp extends BaseModel {
 	public $campId;
-	public $userId;
+	public $playerId;
 	public $name;
 	public $x;
 	public $y;
@@ -512,7 +512,7 @@ class Field extends BaseModel {
 
 class Participant extends BaseModel {
 	public $messageId;
-	public $userId;
+	public $playerId;
 	public $isRead;
 }
 
@@ -567,11 +567,12 @@ class Post extends BaseModel  {
 	public $content;
 	public $createdAt;
 	public $createdBy;
+	public $createdByPlayer;
 }
 
 class FeedItem extends BaseModel {
 	public $feedItemId;
-	public $userId;
+	public $playerId;
 	public $clanId;
 	public $createdAt;
 	public $createdBy;
@@ -583,9 +584,10 @@ class Invitation extends BaseModel  {
 	public $invitationId;
 	public $createdAt;
 	public $createdBy;
-	public $userId;
+	public $playerId;
 	public $clanId;
 	public $type;
+	public $clan;
 }
 class PlayerInfo extends BaseModel {
 	public $playerId;
@@ -613,7 +615,8 @@ class Player extends BaseModel {
 	public $name;
 	public $points;
 	public $clanId;
-	public $rights;	
+	public $rights;
+	public $p3;
 }
 
 

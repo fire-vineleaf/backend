@@ -28,6 +28,7 @@ if (is_null($player)) {
 	die(json_encode($e));
 }
 $controller->contextPlayer = $player;
+$controller->contextAccount = $contextAccount;
 
 	
 $parameters = array();
@@ -45,11 +46,29 @@ switch ($requestMethod) {
 		case "player":
 		$method = "getPlayer";
 		break;
+		case "clan":
+		$method = "getClan";
+		break;
 		case "camps":
 		$method = "getCamps";
 		break;
+		case "invitations":
+		$method = "getInvitations";
+		break;
+		case "account":
+		$method = "getAccount";
+		break;
 		case "camp":
 		$method = "getCamp";
+		break;
+		case "threads":
+		$method = "getThreads";
+		break;
+		case "posts":
+		$method = "getPosts";
+		break;
+		case "leaderboardplayers":
+		$method = "getLeaderboardPlayers";
 		break;
 		case "messages":
 		$method = "getMessages";

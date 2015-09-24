@@ -448,16 +448,60 @@ public function getPlayerById($id) {
 }
 
 /**
+ * retrieves all Invitations
+ * @return Array
+ */
+public function getPlayerInvitations($id, $type) {
+	$query = "SELECT i.invitation_id, i.created_by, i.player_id, i.created_at, i.clan_id, i.type, c.name FROM invitations i, clans c WHERE i.clan_id = c.clan_id AND i.player_id = ? and type = ?";
+	$stmt = $this->prepare($query);
+	$rc = $stmt->bind_param("ii", $id, $type);
+	$this->checkBind($rc);
+	$stmt = $this->execute($stmt);
+	$a = array();
+	$rc = $stmt->bind_result($a["invitationId"], $a["createdBy"], $a["playerId"], $a["createdAt"], $a["clanId"], $a["type"], $a["name"]);
+	$this->checkBind($rc);
+	$models = array();
+	while ($stmt->fetch()) {
+		$i = Invitation::CreateModelFromRepositoryArray($a);
+		$i->clan = Clan::CreateModelFromRepositoryArray($a);
+		$models[]  = $i;
+	}
+	return $models;
+}
+
+/**
+ * get Clan by id
+ * @param int $id
+ * @return Clan 
+ */	
+public function getClanById($id) {
+	$query = "SELECT clan_id, name FROM clans where clan_id = ?";
+	$stmt = $this->prepare($query);
+	$rc = $stmt->bind_param("i", $id);
+	$this->checkBind($rc);
+	$stmt = $this->execute($stmt);
+	$a = array();
+	$rc = $stmt->bind_result($a["clanId"], $a["name"]);
+	$this->checkBind($rc);
+	if ($stmt->fetch()) {
+		return Clan::CreateModelFromRepositoryArray($a);
+	} else {
+		return null;
+	}
+}
+
+/**
  * creates Participant 
  * @param Participant $model
  * @return Participant 
  */	
 public function createParticipant($model) {
-	$query = "INSERT INTO participants (player_id, is_read) VALUES ( ?, ?)";
+	$query = "INSERT INTO participants (player_id, message_id, is_read) VALUES (?, ?, ?)";
 	$stmt = $this->prepare($query);
-	$rc = $stmt->bind_param("ii"
+	$rc = $stmt->bind_param("iii"
 		, $model->playerId
-, $model->isRead
+		, $model->messageId
+		, $model->isRead
 	);
 	$this->checkBind($rc);
 	$stmt = $this->execute($stmt);
@@ -976,8 +1020,68 @@ public function deleteClan($id) {
 		$stmt = $this->execute($stmt);
 		return $model;
 	}
-	
-	
+
+/**
+ * retrieves all Threads of a clan
+ * @return Array
+ */
+public function getThreads($id) {
+	$query = "SELECT thread_id, subject, clan_id, created_at, created_by FROM threads WHERE clan_id = ?";
+	$stmt = $this->prepare($query);
+	$rc = $stmt->bind_param("i", $id);
+	$this->checkBind($rc);
+	$stmt = $this->execute($stmt);
+	$a = array();
+	$rc = $stmt->bind_result($a["threadId"], $a["subject"], $a["clanId"], $a["createdAt"], $a["createdBy"]);
+	$this->checkBind($rc);
+	$models = array();
+	while ($stmt->fetch()) {
+		$models[] = Thread::CreateModelFromRepositoryArray($a);
+	}
+	return $models;
+}	
+
+
+/**
+ * retrieves all Players
+ * @return Array
+ */
+public function getLeaderboardPlayers() {
+	$query = "SELECT player_id, name, points, clan_id, rights, p3 FROM players ORDER BY points DESC";
+	$stmt = $this->prepare($query);
+	$stmt = $this->execute($stmt);
+	$a = array();
+	$rc = $stmt->bind_result($a["playerId"], $a["name"], $a["points"], $a["clanId"], $a["rights"], $a["p3"]);
+	$this->checkBind($rc);
+	$models = array();
+	while ($stmt->fetch()) {
+		$models[] = Player::CreateModelFromRepositoryArray($a);
+	}
+	return $models;
+}
+
+/**
+ * retrieves all Posts
+ * @return Array
+ */
+public function getPosts($id) {
+	$query = "SELECT p.post_id, p.thread_id, p.created_at, p.created_by, p.content, pl.player_id, pl.name, pl.points FROM posts p, players pl WHERE p.created_by = pl.player_id AND thread_id = ? ORDER BY created_at";
+	$stmt = $this->prepare($query);
+	$rc = $stmt->bind_param("i", $id);
+	$this->checkBind($rc);
+	$stmt = $this->execute($stmt);
+	$a = array();
+	$rc = $stmt->bind_result($a["postId"], $a["threadId"], $a["createdAt"], $a["createdBy"], $a["content"], $a["playerId"], $a["name"], $a["points"]);
+	$this->checkBind($rc);
+	$models = array();
+	while ($stmt->fetch()) {
+		$m = Post::CreateModelFromRepositoryArray($a);
+		$m->createdByPlayer = PlayerInfo::CreateModelFromRepositoryArray($a);
+		$models[]  = $m;
+	}
+	return $models;
+}
+
 /**
  * creates Thread 
  * @param Thread $model

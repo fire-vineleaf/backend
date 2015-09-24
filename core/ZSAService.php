@@ -6,6 +6,11 @@ class BaseService {
 	 * @var Player
 	 */
 	protected $contextPlayer;
+	/**
+	 * 
+	 * @var Account
+	 */
+	protected $contextAccount;
 
 	protected $repository;
 	
@@ -18,6 +23,9 @@ class BaseService {
 	public $config;
 	
 	function __construct($contextPlayer, $repository) {
+		if (is_null($contextPlayer)) {
+			throw new Exception("contextPlayer must not be null");
+		}
 		$this->contextPlayer = $contextPlayer;
 		$this->repository = $repository;
 		$this->securityManager = new SecurityManager($repository);
@@ -44,24 +52,39 @@ class ZSAService extends BaseService {
 		return $camp;
 	}
 
-	public function getCamps($playerId) {
-	if (is_null($playerId)) {
-		return $this->getOwnCamps();
-	} else {
-		return $this->getPlayerCamps($playerId);
+	public function getCamps($id) {
+		if (is_null($id)) {
+			return $this->getPlayerCamps($this->contextPlayer->playerId);
+		} else {
+			return $this->getPlayerCamps($id);
+		}
 	}
-	}
-
-	public function getOwnCamps() {
-		return $this->getPlayerCamps($this->contextPlayer->playerId);
-	}
-
 	
+	public function getClan($id) {
+		if (is_null($id)) {
+			// todo: check if clan
+			return $this->repository->getClanById($this->contextPlayer->clanId);
+		} else {
+			return $this->repository->getClanById($id);
+		}
+	}
+
 	private function getPlayerCamps($playerId) {
 		$camps = $this->repository->getPlayerCamps($playerId);
 		return $camps;
 	}
+	
+	public function getInvitations($playerId) {
+		$invitations = $this->repository->getPlayerInvitations($playerId, 0);
+		return $invitations;
+	}
 
+	public function getOwnInvitations() {
+		$invitations = $this->getInvitations($this->contextPlayer->playerId);
+		return $invitations;
+	}
+
+	
 	public function createCamp($camp) {
 		$camp = $this->repository->createCamp($camp);
 		
@@ -274,6 +297,11 @@ class ZSAService extends BaseService {
 			$participant = new Participant();
 			$participant->playerId = $playerId;
 			$participant->messageId = $message->messageId;
+			if ($playerId == $this->contextPlayer->playerId) {
+				$participant->isRead = 1;
+			} else {
+				$participant->isRead = 0;
+			}
 			$this->repository->createParticipant($participant);
 		}
 		$reply = new Reply();
@@ -286,10 +314,29 @@ class ZSAService extends BaseService {
 	}
 	
 	public function getClanMembers($id) {
-		$members = $this->repository->getClanMembers($id);
+		if (is_null($id)) {
+			$members = $this->repository->getClanMembers($this->contextPlayer->clanId);
+		} else {
+			$members = $this->repository->getClanMembers($id);
+		}
 		return $members;
 	}
 
+	public function getThreads() {
+		$threads = $this->repository->getThreads($this->contextPlayer->clanId);
+		return $threads;
+	}
+
+	public function getPosts($id) {
+		$threads = $this->repository->getPosts($id);
+		return $threads;
+	}
+	
+	public function getLeaderboardPlayers() {
+		$players = $this->repository->getLeaderboardPlayers();
+		return $players;
+	}
+	
 	public function replyToMessage($id, $reply) {
 		$reply->createdAt = time();
 		$reply->createdBy = $this->contextPlayer->playerId;
