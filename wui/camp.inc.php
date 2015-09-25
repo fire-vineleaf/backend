@@ -5,7 +5,7 @@ $url = $baseUrl."?a=camp&id=$id";
 var_dump($url);
 $response = \Httpful\Request::get($url)
     ->expectsJson()
-	->authenticateWith($username, $password)
+	->authenticateWith($email, $password)
     ->send();
 $camp = $response->body;
 

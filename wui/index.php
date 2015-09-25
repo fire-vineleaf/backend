@@ -3,23 +3,27 @@
 session_start();
 
 
-if (isset($_GET["username"])) {
-	$username = $_GET["username"];
+if (isset($_GET["email"])) {
+	$email = $_GET["email"];
 	$password = "hallo";
-	$_SESSION['username'] = $username;
+	$_SESSION['email'] = $email;
 	$_SESSION['password'] = $password;
 }
-if (isset($_SESSION["username"])) {
-	$username = $_SESSION['username'];
+if (isset($_SESSION["email"])) {
+	$email = $_SESSION['email'];
 	$password = $_SESSION['password'];
 }
 
-require("../config.inc.php.conf");
+require("../config.inc.php");
 require("../includes.inc.php");
 require("../init.inc.php");
 require("httpful.phar");
 
-$baseUrl = "http://localhost/zsa/api.php";
+$baseUrl = "http://localhost/vineleaf/backend/api.php";
+
+$securityManager = new SecurityManager($repository);
+$contextPlayer = $securityManager->getPlayerById($contextAccount->playerId);
+$service = new ZSAService($contextPlayer, $repository);
 
 ?><!DOCTYPE html>
 <html lang="en">
@@ -29,13 +33,13 @@ $baseUrl = "http://localhost/zsa/api.php";
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-<script type="text/javascript" src="../WebClient/jquery.min.js"></script>
-<script type="text/javascript" src="../WebClient/jquery-ui.min.js"></script>
-<script type="text/javascript" src="../WebClient/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="jquery.min.js"></script>
+<script type="text/javascript" src="jquery-ui.min.js"></script>
+<script type="text/javascript" src="bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
 
-<link rel="stylesheet" href="../WebClient/jquery-ui.css" />
-<link rel="stylesheet" href="../WebClient/bootstrap-3.3.5-dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="../WebClient/bootstrap-3.3.5-dist/css/bootstrap-theme.css">
+<link rel="stylesheet" href="jquery-ui.css" />
+<link rel="stylesheet" href="bootstrap-3.3.5-dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="bootstrap-3.3.5-dist/css/bootstrap-theme.css">
 </head>
 <body>
 
@@ -78,7 +82,7 @@ $baseUrl = "http://localhost/zsa/api.php";
         <button type="submit" class="btn btn-default">Submit</button>
       </form>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Username: <?php echo $username; ?></a></li>
+        <li><a href="#">email: <?php echo $email; ?></a></li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
           <ul class="dropdown-menu">
