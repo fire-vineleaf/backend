@@ -146,7 +146,7 @@ public function getBuildingById($id) {
  * @return Array
  */
 public function getPlayerCamps($playerId) {
-	$query = "SELECT camp_id, name, player_id, x, y, b1, b2, b3, p1, p2, scores FROM camps WHERE player_id";
+	$query = "SELECT camp_id, name, player_id, x, y, b1, b2, b3, p1, p2, scores FROM camps WHERE player_id = ?";
 	$stmt = $this->prepare($query);
 	$rc = $stmt->bind_param("i", $playerId);
 	$stmt = $this->execute($stmt);
@@ -637,17 +637,19 @@ public function getMessages($playerId) {
  * @return Array
  */
 public function getReplies($messageId) {
-	$query = "SELECT reply_id, reply, created_at, created_by, message_id FROM replies WHERE message_id = ?";
+	$query = "SELECT r.reply_id, r.reply, r.created_at, r.created_by, r.message_id, pl.player_id, pl.name, pl.points FROM replies r, players pl WHERE r.created_by = pl.player_id AND message_id = ?";
 	$stmt = $this->prepare($query);
 	$rc = $stmt->bind_param("i", $messageId);
 	$this->checkBind($rc);
 	$stmt = $this->execute($stmt);
 	$a = array();
-	$rc = $stmt->bind_result($a["replyId"], $a["reply"], $a["createdAt"], $a["createdBy"], $a["messageId"]);
+	$rc = $stmt->bind_result($a["replyId"], $a["reply"], $a["createdAt"], $a["createdBy"], $a["messageId"], $a["playerId"], $a["name"], $a["points"]);
 	$this->checkBind($rc);
 	$models = array();
 	while ($stmt->fetch()) {
-		$models[] = Reply::CreateModelFromRepositoryArray($a);
+		$m = Reply::CreateModelFromRepositoryArray($a);
+		$m->createdByPlayer = PlayerInfo::CreateModelFromRepositoryArray($a);
+		$models[] = $m;
 	}
 	return $models;
 }

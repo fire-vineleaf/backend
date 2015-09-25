@@ -536,7 +536,9 @@ class Message extends BaseModel {
 		$message->subject = $array["subject"];
 		$message->createdBy = $array["createdBy"];
 		$message->createdAt = $array["createdAt"];
-		$message->isRead = $array["isRead"];
+		if(isset($array["isRead"])) {
+			$message->isRead = $array["isRead"];
+		}
 
 		return $message;
 	}
@@ -549,6 +551,8 @@ class Reply extends BaseModel {
 	public $createdBy;
 	public $reply;
 	public $messageId;
+	
+	public $createdByPlayer;
 }
 
 class Thread extends BaseModel  {

@@ -10,7 +10,7 @@ class BaseService {
 	 * 
 	 * @var Account
 	 */
-	protected $contextAccount;
+	public $contextAccount;
 
 	protected $repository;
 	
@@ -85,7 +85,7 @@ class ZSAService extends BaseService {
 	}
 
 	
-	public function createCamp($camp) {
+	private function createCamp($camp) {
 		$camp = $this->repository->createCamp($camp);
 		
 		for ($i=0;$i<13;$i++) {
@@ -93,6 +93,7 @@ class ZSAService extends BaseService {
 			$building->type = $i;
 			$building->campId = $camp->campId;
 			$building->level = 1;
+		
 			$building = $this->repository->createBuilding($building);
 		}
 		return $camp;
@@ -509,6 +510,13 @@ class ZSAService extends BaseService {
 					$camp->playerId = 1;
 					$camp->x = $x;
 					$camp->y = $y;
+					$camp->b1 = 0;
+					$camp->b2 = 0;
+					$camp->b3 = 0;
+					$camp->p1 = 0;
+					$camp->p2 = 0;
+					$camp->scores = 0;
+
 					$camp = $this->createCamp($camp);
 
 					$field->objectId = $camp->campId;
