@@ -425,23 +425,66 @@ public function getInvitationById($id) {
 		return null;
 	}
 }
-	
+
+/**
+ * retrieves all Clans
+ * @return Array
+ */
+private function getClansPriv($stmt) {
+	$stmt = $this->execute($stmt);
+	$a = array();
+	$rc = $stmt->bind_result($a["clanId"], $a["name"], $a["points"], $a["status"]);
+	$this->checkBind($rc);
+	$models = array();
+	while ($stmt->fetch()) {
+		$models[] = $this->createClanFromArray($a);
+	}
+	return $models;
+}
+
+/**
+ * retrieves all Clans
+ * @return Array
+ */
+public function getClans($ownClanId) {
+	$query = "SELECT c.clan_id, c.name, c.points, d.status FROM clans c LEFT OUTER JOIN diplomacies d on c.clan_id = d.clan2_id and d.clan1_id = ?";
+	$stmt = $this->prepare($query);
+	$rc = $stmt->bind_param("i", $ownClanId);
+	$this->checkBind($rc);
+	return $this->getClansPriv($stmt);
+}
+
+/**
+ * retrieves all Clans
+ * @return Array
+ */
+public function getClanDiplomacy($ownClanId) {
+	$query = "SELECT c.clan_id, c.name, c.points, d.status FROM clans c inner JOIN diplomacies d on c.clan_id = d.clan2_id and d.clan1_id = ?";
+	$stmt = $this->prepare($query);
+	$rc = $stmt->bind_param("i", $ownClanId);
+	$this->checkBind($rc);
+	return $this->getClansPriv($stmt);
+}
+
 /**
  * get Player by id
  * @param int $id
  * @return Player 
  */	
 public function getPlayerById($id) {
-	$query = "SELECT player_id, name, points, clan_id, rights, p3 FROM players where player_id = ?";
+	$query = "SELECT pl.player_id, pl.name, pl.points, pl.clan_id, pl.rights, pl.p3, c.name as cname FROM players pl LEFT OUTER JOIN clans c ON c.clan_id = pl.clan_id WHERE pl.player_id = ?";
 	$stmt = $this->prepare($query);
 	$rc = $stmt->bind_param("i", $id);
 	$this->checkBind($rc);
 	$stmt = $this->execute($stmt);
 	$a = array();
-	$rc = $stmt->bind_result($a["playerId"], $a["name"], $a["points"], $a["clanId"], $a["rights"], $a["p3"]);
+	$rc = $stmt->bind_result($a["playerId"], $a["name"], $a["points"], $a["clanId"], $a["rights"], $a["p3"], $a["cname"]);
 	$this->checkBind($rc);
 	if ($stmt->fetch()) {
-		return Player::CreateModelFromRepositoryArray($a);
+		$r = Player::CreateModelFromRepositoryArray($a);
+		$r->clan = Clan::CreateModelFromRepositoryArray($a);
+		$r->clan->name = $a["cname"];
+		return $r;
 	} else {
 		return null;
 	}
@@ -470,25 +513,76 @@ public function getPlayerInvitations($id, $type) {
 }
 
 /**
- * get Clan by id
- * @param int $id
- * @return Clan 
- */	
-public function getClanById($id) {
-	$query = "SELECT clan_id, name FROM clans where clan_id = ?";
+ * retrieves all Invitations
+ * @return Array
+ */
+public function getClanInvitations($id, $type) {
+	$query = "SELECT i.invitation_id, i.created_by, i.player_id, i.created_at, i.clan_id, i.type, pl.name, pl.player_id, pl.points FROM invitations i, players pl WHERE i.player_id = pl.player_id AND i.clan_id = ? and type = ?";
+	$stmt = $this->prepare($query);
+	$rc = $stmt->bind_param("ii", $id, $type);
+	$this->checkBind($rc);
+	$stmt = $this->execute($stmt);
+	$a = array();
+	$rc = $stmt->bind_result($a["invitationId"], $a["createdBy"], $a["playerId"], $a["createdAt"], $a["clanId"], $a["type"], $a["name"], $a["playerId"], $a["points"]);
+	$this->checkBind($rc);
+	$models = array();
+	while ($stmt->fetch()) {
+		$i = Invitation::CreateModelFromRepositoryArray($a);
+		$i->player = PlayerInfo::CreateModelFromRepositoryArray($a);
+		$models[]  = $i;
+	}
+	return $models;
+}
+
+/**
+ * retrieves all FeedItems
+ * @return Array
+ */
+public function getClanFeedItems($id) {
+	$query = "SELECT feed_item_id, player_id, clan_id, type, created_at, created_by, payload FROM feed_items WHERE clan_id = ? ORDER BY created_at DESC";
 	$stmt = $this->prepare($query);
 	$rc = $stmt->bind_param("i", $id);
 	$this->checkBind($rc);
 	$stmt = $this->execute($stmt);
 	$a = array();
-	$rc = $stmt->bind_result($a["clanId"], $a["name"]);
+	$rc = $stmt->bind_result($a["feedItemId"], $a["playerId"], $a["clanId"], $a["type"], $a["createdAt"], $a["createdBy"], $a["payload"]);
+	$this->checkBind($rc);
+	$models = array();
+	while ($stmt->fetch()) {
+		$models[] = FeedItem::CreateModelFromRepositoryArray($a);
+	}
+	return $models;
+}
+
+
+/**
+ * get Clan by id
+ * @param int $id
+ * @return Clan 
+ */	
+public function getClanById($id, $ownClanId) {
+	$query = "SELECT c.clan_id, c.name, c.points, d.status FROM clans c LEFT OUTER JOIN diplomacies d ON c.clan_id = d.clan2_id and d.clan1_id = ? where clan_id = ?";
+	$stmt = $this->prepare($query);
+	$rc = $stmt->bind_param("ii", $ownClanId, $id);
+	$this->checkBind($rc);
+	$stmt = $this->execute($stmt);
+	$a = array();
+	$rc = $stmt->bind_result($a["clanId"], $a["name"], $a["points"], $a["status"]);
 	$this->checkBind($rc);
 	if ($stmt->fetch()) {
-		return Clan::CreateModelFromRepositoryArray($a);
+		return $this->createClanFromArray($a);
 	} else {
 		return null;
 	}
 }
+
+private function createClanFromArray($a) {
+	$c = Clan::CreateModelFromRepositoryArray($a);
+	$c->status = is_null($c->status) ? 0 : $c->status;
+	return $c;
+
+}
+
 
 /**
  * creates Participant 
@@ -799,7 +893,8 @@ public function createBuilding($model) {
  * @return Array
  */
 public function getSection($x1, $y1, $x2, $y2) {
-	$query = "SELECT field_id, type, x, y, object_id FROM fields WHERE x >= ? and x <= ? and y >= ? and y <= ? order by y, x";
+	//$query = "SELECT field_id, type, x, y, object_id FROM fields WHERE x >= ? and x <= ? and y >= ? and y <= ? order by y, x";
+	$query = "SELECT f.field_id, f.type, f.x, f.y, c.camp_id, c.name, c.scores FROM fields f LEFT OUTER JOIN camps c ON f.object_id = c.camp_id WHERE f.x >= ? and f.x <= ? and f.y >= ? and f.y <= ? order by f.y, f.x";
 	$stmt = $this->mysqli->prepare($query);
 	if ($stmt === false) {
 		throw new RepositoryException($this->mysqli->error, $this->mysqli->errno);
@@ -814,7 +909,7 @@ public function getSection($x1, $y1, $x2, $y2) {
 		throw new RepositoryException($stmt->error, $stmt->errno);
 	}
 	$a = array();
-	$rc = $stmt->bind_result($fieldId, $type, $x, $y, $objectId);
+	$rc = $stmt->bind_result($fieldId, $type, $x, $y, $objectId, $campName, $points);
 	if ($rc === false) {
 		throw new RepositoryException($stmt->error, $stmt->errno);
 	}
@@ -826,6 +921,11 @@ public function getSection($x1, $y1, $x2, $y2) {
 		$field->y = $y;
 		$field->type = $type;
 		$field->objectId = $objectId;
+		$field->camp = array();
+		$field->camp["name"] = $campName;
+		$field->camp["points"] = $points;
+		$field->clan = array();
+		$field->clan["status"] = 0;
 		$models[] = $field;
 	}
 	return $models;
@@ -965,19 +1065,39 @@ public function createAccount($model) {
  * @return Player 
  */	
 public function createPlayer($model) {
-	$query = "INSERT INTO players (name, points, clan_id, rights, p3) VALUES ( ?, ?, ?, ?, ?)";
+	$query = "INSERT INTO players (name, points, clan_id, rights, p3, is_free) VALUES (?, ?, ?, ?, ?, ?)";
 	$stmt = $this->prepare($query);
-	$rc = $stmt->bind_param("siiii"
+	$rc = $stmt->bind_param("siiiii"
 		, $model->name
 , $model->points
 , $model->clanId
 , $model->rights
 , $model->p3
+, $model->isFree
 	);
 	$this->checkBind($rc);
 	$stmt = $this->execute($stmt);
 	$model->playerId = $this->mysqli->insert_id;
 	return $model;
+}
+
+/**
+ * get Player by id
+ * @param int $id
+ * @return Player 
+ */	
+public function getNextFreePlayer() {
+	$query = "SELECT player_id, name, points, clan_id, rights, p3, is_free FROM players";
+	$stmt = $this->prepare($query);
+	$stmt = $this->execute($stmt);
+	$a = array();
+	$rc = $stmt->bind_result($a["playerId"], $a["name"], $a["points"], $a["clanId"], $a["rights"], $a["p3"], $a["isFree"]);
+	$this->checkBind($rc);
+	if ($stmt->fetch()) {
+		return Player::CreateModelFromRepositoryArray($a);
+	} else {
+		return null;
+	}
 }
 
 /**
@@ -993,6 +1113,27 @@ public function updatePlayerClan($model) {
 		, $model->playerId	);
 	$this->checkBind($rc);
 	$stmt = $this->execute($stmt);
+	return $model;
+}
+/**
+ * updates Player 
+ * @param Player $model
+ * @return Player 
+ */
+public function updatePlayer($model) {
+	$query = "UPDATE players SET name = ?, points = ?, clan_id = ?, rights = ?, p3 = ?, is_free = ? WHERE player_id = ?";
+	$stmt = $this->prepare($query);
+	$rc = $stmt->bind_param("siiiiii"
+		, $model->name
+, $model->points
+, $model->clanId
+, $model->rights
+, $model->p3
+, $model->isFree
+ 
+		, $model->playerId	);
+	$this->checkBind($rc);
+	$stmt = $this->execute($stmt);	
 	return $model;
 }
 
@@ -1048,7 +1189,7 @@ public function getThreads($id) {
  * retrieves all Players
  * @return Array
  */
-public function getLeaderboardPlayers() {
+public function getPlayers() {
 	$query = "SELECT player_id, name, points, clan_id, rights, p3 FROM players ORDER BY points DESC";
 	$stmt = $this->prepare($query);
 	$stmt = $this->execute($stmt);
@@ -1105,7 +1246,7 @@ public function createThread($model) {
 		throw new RepositoryException($stmt->error, $stmt->errno);
 	}
 	return $model;
-}	
+}
 
 /**
  * creates Post 
@@ -1147,8 +1288,76 @@ public function getClanMembers($clanId) {
 	}
 	return $models;
 }
-	
-	
+
+/**
+ * deletes Diplomacy 
+ * @param int $id
+ */	
+public function deleteDiplomacy($clan1Id, $clan2Id) {
+	$query = "DELETE FROM diplomacies WHERE clan1_id = ? and clan2_id = ?";
+	$stmt = $this->prepare($query);
+	$rc = $stmt->bind_param("ii", $clan1Id, $clan2Id);
+	$this->checkBind($rc);
+	$stmt = $this->execute($stmt);
+}
+
+/**
+ * get Diplomacy by id
+ * @param int $id
+ * @return Diplomacy 
+ */	
+public function getDiplomacy($clan1Id, $clan2Id) {
+	$query = "SELECT diplomacy_id, clan1_id, clan2_id, status FROM diplomacies where clan1_id = ? AND clan2_id = ?";
+	$stmt = $this->prepare($query);
+	$rc = $stmt->bind_param("ii", $clan1Id, $clan2Id);
+	$this->checkBind($rc);
+	$stmt = $this->execute($stmt);
+	$a = array();
+	$rc = $stmt->bind_result($a["diplomacyId"], $a["clan1Id"], $a["clan2Id"], $a["status"]);
+	$this->checkBind($rc);
+	if ($stmt->fetch()) {
+		return Diplomacy::CreateModelFromRepositoryArray($a);
+	} else {
+		return null;
+	}
+}
+
+/**
+ * updates Diplomacy 
+ * @param Diplomacy $model
+ * @return Diplomacy 
+ */
+public function updateDiplomacy($model) {
+	$query = "UPDATE diplomacies SET clan1_id = ?, clan2_id = ?, status = ? WHERE diplomacy_id = ?";
+	$stmt = $this->prepare($query);
+	$rc = $stmt->bind_param("iiii"
+		, $model->clan1Id
+		, $model->clan2Id
+		, $model->status
+		, $model->diplomacyId	);
+	$this->checkBind($rc);
+	$stmt = $this->execute($stmt);	
+	return $model;
+}
+
+/**
+ * creates Diplomacy 
+ * @param Diplomacy $model
+ * @return Diplomacy 
+ */	
+public function createDiplomacy($model) {
+	$query = "INSERT INTO diplomacies (clan1_id, clan2_id, status) VALUES ( ?, ?, ?)";
+	$stmt = $this->prepare($query);
+	$rc = $stmt->bind_param("iii"
+		, $model->clan1Id
+, $model->clan2Id
+, $model->status
+	);
+	$this->checkBind($rc);
+	$stmt = $this->execute($stmt);
+	$model->diplomacyId = $this->mysqli->insert_id;
+	return $model;
+}
 }
 
 ?>

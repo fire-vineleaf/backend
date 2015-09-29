@@ -63,9 +63,9 @@ class ZSAService extends BaseService {
 	public function getClan($id) {
 		if (is_null($id)) {
 			// todo: check if clan
-			return $this->repository->getClanById($this->contextPlayer->clanId);
+			return $this->repository->getClanById($this->contextPlayer->clanId, $this->contextPlayer->clanId);
 		} else {
-			return $this->repository->getClanById($id);
+			return $this->repository->getClanById($id, $this->contextPlayer->clanId);
 		}
 	}
 
@@ -74,28 +74,33 @@ class ZSAService extends BaseService {
 		return $camps;
 	}
 	
-	public function getInvitations($playerId) {
-		$invitations = $this->repository->getPlayerInvitations($playerId, 0);
+	public function getPlayerInvitations() {
+		$invitations = $this->repository->getPlayerInvitations($this->contextPlayer->playerId, 0);
 		return $invitations;
 	}
-
-	public function getOwnInvitations() {
-		$invitations = $this->getInvitations($this->contextPlayer->playerId);
+	
+	public function getClanFeedItems() {
+		$items = $this->repository->getClanFeedItems($this->contextPlayer->clanId);
+		return $items;
+	}
+	
+	public function getClanInvitations() {
+		$invitations = $this->repository->getClanInvitations($this->contextPlayer->clanId, 0);
 		return $invitations;
 	}
-
 	
 	private function createCamp($camp) {
 		$camp = $this->repository->createCamp($camp);
-		
+		// todo: später wieder an machen
+		/* 
 		for ($i=0;$i<13;$i++) {
 			$building = new Building();
 			$building->type = $i;
 			$building->campId = $camp->campId;
 			$building->level = 1;
-		
 			$building = $this->repository->createBuilding($building);
 		}
+		*/
 		return $camp;
 	}
 	
@@ -130,7 +135,7 @@ class ZSAService extends BaseService {
 		$player = $this->repository->updatePlayerClan($player);
 		$player = $this->repository->updatePlayerRights($player);
 			
-		$item = $this->createFeedItem(FeedItemTypes::CreatedClan);
+		$item = $this->createFeedItem(FeedItemTypes::ClanCreated);
 		$item->payload = "todo: payload"; // todo: payload
 		$this->repository->createFeedItem($item);
 
@@ -139,11 +144,8 @@ class ZSAService extends BaseService {
 	
 	public function leaveClan() {
 		$this->removePlayerFromClan($this->contextPlayer);
-		$item = $this->createFeedItem(FeedItemTypes::InvitationAccepted);
-		$item->payload = "todo: payload"; // todo: payload
-		$this->repository->createFeedItem($item);
 
-		$item = $this->createFeedItem(FeedItemTypes::LeftClan);
+		$item = $this->createFeedItem(FeedItemTypes::ClanLeft);
 		$item->payload = "todo: payload"; // todo: payload
 		$this->repository->createFeedItem($item);
 	}
@@ -172,7 +174,6 @@ class ZSAService extends BaseService {
 		$invitation->playerId = $playerId;
 		$invitation->type = InvitationTypes::Invitation;
 		$invitation = $this->repository->createInvitation($invitation);
-
 		$item = $this->createFeedItem(FeedItemTypes::InvitationSent);
 		$item->payload = "todo: payload"; // todo: payload
 		$this->repository->createFeedItem($item);
@@ -198,6 +199,7 @@ class ZSAService extends BaseService {
 		$invitation = $this->repository->getInvitationById($invitationId);
 		$this->checkIsFound($invitation);
 		$player = $this->repository->getPlayerById($invitation->playerId);
+		$curClanId = $player->clanId;
 		$player->clanId = $invitation->clanId;
 		$player->rights = 0;
 		$player = $this->repository->updatePlayerClan($player);
@@ -207,6 +209,14 @@ class ZSAService extends BaseService {
 		$item = $this->createFeedItem(FeedItemTypes::InvitationAccepted);
 		$item->payload = "todo: payload"; // todo: payload
 		$this->repository->createFeedItem($item);
+		
+		// check: currently in clan?
+		if (!is_null($curClanId)) {
+			$item = $this->createFeedItem(FeedItemTypes::ClanLeft);
+			$item->clanId = $curClanId;
+			$item->payload = "todo: payload"; // todo: payload
+			$this->repository->createFeedItem($item);
+		}
 	}
 
 	public function rejectInvitation($invitationId) {
@@ -225,7 +235,9 @@ class ZSAService extends BaseService {
 		$item->payload = "todo: payload"; // todo: payload
 		$this->repository->createFeedItem($item);
 	}
-	
+	public function hasRight($rights, $right) {
+		return $rights & $right;
+	}
 	public function revokeRight($playerId, $right) {
 		$player = $this->repository->getPlayerById($playerId);
 		$this->checkIsFound($player);
@@ -236,7 +248,14 @@ class ZSAService extends BaseService {
 		$this->repository->createFeedItem($item);
 	}
 	
-	
+	public function getClans() {
+		$clans = $this->repository->getClans($this->contextPlayer->clanId);
+		return $clans;
+	}
+	public function getClanDiplomacy() {
+		$clans = $this->repository->getClanDiplomacy($this->contextPlayer->clanId);
+		return $clans;
+	}
 	
 	private function createFeedItem($type) {
 		$item = new FeedItem();
@@ -333,9 +352,35 @@ class ZSAService extends BaseService {
 		return $threads;
 	}
 	
-	public function getLeaderboardPlayers() {
-		$players = $this->repository->getLeaderboardPlayers();
+	public function getPlayers() {
+		$players = $this->repository->getPlayers();
 		return $players;
+	}
+	
+	public function setDiplomacy($clanId, $status) {
+		$clan1Id = $this->contextPlayer->clanId;
+		$clan2Id = $clanId;
+		if ($status == 0) {
+			// 0 will not be saved explicitly
+			// so delete
+			$this->repository->deleteDiplomacy($clan1Id, $clan2Id);
+		} else {
+			$diplomacy = $this->repository->getDiplomacy($clan1Id, $clan2Id);
+			if (is_null($diplomacy)) {
+				$diplomacy = new Diplomacy();
+				$diplomacy->clan1Id = $clan1Id;
+				$diplomacy->clan2Id = $clan2Id;
+				$diplomacy->status = $status;
+				$diplomacy = $this->repository->createDiplomacy($diplomacy);
+			} else {
+				$diplomacy->status = $status;
+				$diplomacy = $this->repository->updateDiplomacy($diplomacy);
+			}
+		}
+		$item = $this->createFeedItem(FeedItemTypes::DiplomacyChanged);
+		$item->payload = "todo: payload"; // todo: payload
+		$this->repository->createFeedItem($item);
+			
 	}
 	
 	public function replyToMessage($id, $reply) {
@@ -403,9 +448,7 @@ class ZSAService extends BaseService {
 			$finishTime = $lastTask->finishedAt > time() ? $lastTask->finishedAt : time();
 		}
 		if (!isset($this->config["buildings"][$building->type][$nextLevel])) {
-		var_dump($building);
-		var_dump($nextLevel);
-		var_dump($this->config["buildings"][$building->type]);
+
 			throw new Exception("upgrade not possible");
 		}
 		$config = $this->config["buildings"][$building->type][$nextLevel];
@@ -476,8 +519,8 @@ class ZSAService extends BaseService {
 		$section = new Section();
 		$section->x1 = $x - 5;
 		$section->x2 = $x + 5;
-		$section->y1 = $y - 10;
-		$section->y2 = $y + 10;
+		$section->y1 = $y - 5;
+		$section->y2 = $y + 5;
 		$fields = $this->repository->getSection($section->x1, $section->y1, $section->x2, $section->y2);
 		$section->fields = $fields;
 		return $section;
@@ -493,21 +536,32 @@ class ZSAService extends BaseService {
 		$numCamps = 0;
 		
 		$y = $startY;
+		$j = 1;
 		while ($y < $startY + $size) {
 			$y += 1; //rand(1, 4);
 			$x = $startX;
 			$previousR = 0;
 			while ($x < $startX + $size) {
 				do {
-					$r = rand(1, 4);
+					$r = rand(1, 8);
 				} while ($r == $previousR);
 				$x += $r;
 				$previousR = $r;
 				$field = $this->repository->getFieldByXY($x, $y);
 				if (!is_null($field)) {
+					// each camp is owned by a wild fairy initially
+					$player = new Player();
+					$player->name = "Wild Fairy $j";
+					$player->isFree = true;
+					$player->points = 0;
+					$player->p3 = 0;
+					$player->rights = 0;
+					$player = $this->repository->createPlayer($player);
+
+					$j++;
 					$camp = new Camp();
 					$camp->name = "Abandoned Tree ".($numCamps+100);
-					$camp->playerId = 1;
+					$camp->playerId = $player->playerId;
 					$camp->x = $x;
 					$camp->y = $y;
 					$camp->b1 = 0;

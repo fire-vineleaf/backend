@@ -9,12 +9,16 @@ class SecurityManager extends BaseManager {
 	 * creates a new player, including the account
 	 */
 	public function createPlayer($email, $name, $password) {
-		$player =new Player();
+		$player = $this->repository->getNextFreePlayer();
+		if (is_null($player)) {
+			throw new Exception("no more free players available");
+		}
 		$player->name = $name;
 		$player->points = 0;
 		$player->p3 = 0;
 		$player->rights = 0;
-		$player = $this->repository->createPlayer($player);
+		$player->isFree = false;
+		$player = $this->repository->updatePlayer($player);
 		
 		$account = new Account();
 		$account->email = $email;

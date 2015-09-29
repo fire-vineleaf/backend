@@ -2,14 +2,13 @@
 <ul>
 <?php
 
-$url = $baseUrl."?a=camps&id=343";
+$url = $baseUrl."?a=camps";
 var_dump($url);
 
 $response = \Httpful\Request::get($url)
     ->expectsJson()
 	->authenticateWith($email, $password)
     ->send();
-
 
 $camps = $response->body;
 

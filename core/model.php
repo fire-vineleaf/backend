@@ -180,44 +180,6 @@ class BaseModel {
 	}
 }
 
-/**
- * represents preview of an object
- *
- */
-class ObjectPreview {
-	/**
-	 * 
-	 * @var ObjectType
-	 */
-	public $objectType;
-	public $objectName;
-	
-	
-	public $properties = array();
-
-	/**
-	 * adds a property to this preview
-	 * @param ObjectPreviewProperty $property
-	 */
-	public function addProperty($name, $caption, $value) {
-		$property = new ObjectPreviewProperty();
-		$property->name = $name;
-		$property->caption = $caption;
-		$property->value = $value;
-		$this->properties[] = $property;
-	}
-}
-
-/**
- * property of an object in a preview
- *
- */
-class ObjectPreviewProperty {
-	public $name;
-	public $caption;
-	public $value;
-}
-
 class ApiResponse {
 	/**
 	 * 
@@ -372,11 +334,11 @@ abstract class FeedItemTypes {
 	const ApplicationSent = 4;
 	const ApplicationAccepted = 5;
 	const ApplicationRejected = 6;
-	const JoinedClan = 7;
 	const RightRevoked = 8;
 	const RightGranted = 9;
-	const LeftClan = 9;
-	const CreatedClan = 10;
+	const ClanLeft = 10;
+	const ClanCreated = 11;
+	const DiplomacyChanged = 12;
 
 	/* user specific */
 // starting with 50
@@ -386,6 +348,14 @@ abstract class TaskTypes {
 	const UpgradeBuilding = 1;
 	const RecruitUnit = 2;
 	const AttackCamp = 3;
+}
+
+abstract class DiplomacyStatus {
+	const Neutral = 0;
+	const Enemy = 1;
+	const Ally = 2;
+	const NAP = 3;
+	const Vassal = 4;
 }
 
 /**
@@ -472,6 +442,13 @@ class Camp extends BaseModel {
 	public $buildings = array();
 }
 
+class Diplomacy extends BaseModel {
+	public $diplomacyId;
+	public $clan1Id;
+	public $clan2Id;
+	public $status;
+}
+
 class Building extends BaseModel  {
 	public $buildingId;
 	public $campId;
@@ -482,6 +459,8 @@ class Building extends BaseModel  {
 class Clan extends BaseModel {
 	public $clanId;
 	public $name;
+	public $points = 0;
+	public $status = 0; // diplomacystatus
 }
 
 class Section extends BaseModel {
@@ -498,7 +477,9 @@ class Field extends BaseModel {
 	public $y;
 	public $type;
 	public $objectId;
-
+	public $camp;
+	public $clan;
+	
 	public static function createModelFromRepositoryArray($array) {
 		$field = new Field();
 		$field->fieldId = $array["fieldId"];
@@ -591,6 +572,7 @@ class Invitation extends BaseModel  {
 	public $playerId;
 	public $clanId;
 	public $type;
+	public $player;
 	public $clan;
 }
 class PlayerInfo extends BaseModel {
@@ -621,6 +603,8 @@ class Player extends BaseModel {
 	public $clanId;
 	public $rights;
 	public $p3;
+	public $clan;
+	public $isFree;
 }
 
 

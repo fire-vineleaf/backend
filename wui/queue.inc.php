@@ -2,7 +2,6 @@
 <ul>
 <?php
 
-$service = new ZSAService($contextUser, $repository);
 $tasks = $repository->getDueTasks();
 
 foreach ($tasks as $t) {

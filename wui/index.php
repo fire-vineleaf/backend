@@ -1,8 +1,100 @@
 <?php
 
+function echoPlayer($player) {
+	echo "<a href=\"index.php?page=player&id=".$player->playerId."\">".$player->name." (".$player->points.")</a>";
+}
+
+function echoClan($clan) {
+	echo $clan->status." <a href=\"index.php?page=clan&id=".$clan->clanId."\">".$clan->name." (".$clan->points.")</a>";
+}
+
+function echoSelectPlayer() {
+	echo "<select name=\"playerId\">";
+	for ($i=1;$i<= 200;$i++) {
+		echo "<option value=\"$i\">Player$i</option>";
+	}
+	echo "</select>";
+}
+
+function echoDate($timestamp) {
+	echo date(DATE_RFC822, $timestamp);
+}
+
+function echoFeedItemType($type) {
+	switch($type) {
+		case "1":
+		echo "InvitationSent";
+		break;
+		case "2":
+		echo "InvitationAccepted";
+		break;
+		case "3":
+		echo "InvitationRejected";
+		break;
+		case "4":
+		echo "ApplicationSent";
+		break;
+		case "5":
+		echo "ApplicationAccepted";
+		break;
+		case "6":
+		echo "ApplicationRejected";
+		break;
+		case "7":
+		echo "JoinedClan";
+		break;
+		case "8":
+		echo "RightRevoked";
+		break;
+		case "9":
+		echo "RightGranted";
+		break;
+		case "10":
+		echo "LeftClan";
+		break;
+		case "11":
+		echo "CreatedClan";
+		break;
+		case "12":
+		echo "DiplomacyChanged";
+		break;
+
+
+		default:
+		echo "todo: map me";
+		break;
+	}
+}
+/*
+	const _INVITE = 1;
+	const _MASSMAIL = 2;
+	const _MODERATOR = 4;
+	const _DIPLOMACY = 8;
+	const _DISMISS = 16;
+	const _RIGHTS = 32;
+	const _DISBAND = 64;
+	*/
+function echoPlayerRights($player, $isEnabled) {
+	global $service;
+	$disabled = $isEnabled ? "" : "disabled";
+	$checked = $service->hasRight($player->rights, Rights::_INVITE) ? "checked" : ""; 
+	echo "<input type=\"checkbox\" value=\"".Rights::_INVITE."\" $checked $disabled> Invite<br/>";
+	$checked = $service->hasRight($player->rights, Rights::_MASSMAIL) ? "checked" : ""; 
+	echo "<input type=\"checkbox\" value=\"".Rights::_MASSMAIL."\" $checked $disabled> Massmail<br/>";
+	$checked = $service->hasRight($player->rights, Rights::_MODERATOR) ? "checked" : ""; 
+	echo "<input type=\"checkbox\" value=\"".Rights::_MODERATOR."\" $checked $disabled> Moderator<br/>";
+	$checked = $service->hasRight($player->rights, Rights::_DIPLOMACY) ? "checked" : ""; 
+	echo "<input type=\"checkbox\" value=\"".Rights::_DIPLOMACY."\" $checked $disabled> Diplomacy<br/>";
+	$checked = $service->hasRight($player->rights, Rights::_DISMISS) ? "checked" : ""; 
+	echo "<input type=\"checkbox\" value=\"".Rights::_DISMISS."\" $checked $disabled> Dismiss<br/>";
+	$checked = $service->hasRight($player->rights, Rights::_RIGHTS) ? "checked" : ""; 
+	echo "<input type=\"checkbox\" value=\"".Rights::_RIGHTS."\" $checked $disabled> Rights<br/>";
+	$checked = $service->hasRight($player->rights, Rights::_DISBAND) ? "checked" : ""; 
+	echo "<input type=\"checkbox\" value=\"".Rights::_DISBAND."\" $checked $disabled> Disband<br/>";
+
+}
+
 session_start();
-
-
 if (isset($_GET["email"])) {
 	$email = $_GET["email"];
 	$password = "hallo";
@@ -28,7 +120,7 @@ $service = new ZSAService($contextPlayer, $repository);
 ?><!DOCTYPE html>
 <html lang="en">
   <head>
-  <title>ZSA WUI</title>
+  <title><?php echo $contextPlayer->playerId; ?> - <?php echo $contextPlayer->clanId; ?></title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -54,18 +146,24 @@ $service = new ZSAService($contextPlayer, $repository);
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">ZSA WUI</a>
+      <a class="navbar-brand" href="#">vineleaf testclient</a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
-        <li><a href="#">Link</a></li>
+        <li><a href="index.php">Camps</a></li>
+        <li><a href="index.php?page=messages">Messages</a></li>
+        <li><a href="index.php?page=clan">Clan</a></li>
+        <li><a href="index.php?page=forum">Forum</a></li>
+        <li><a href="index.php?page=field">Map</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a href="index.php?page=clans">Clans</a></li>
+        <li><a href="index.php?page=players">Players</a></li>
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Internal <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
+            <li><a href="index.php?page=queue">Queue</a></li>
             <li><a href="#">Another action</a></li>
             <li><a href="#">Something else here</a></li>
             <li role="separator" class="divider"></li>
@@ -75,12 +173,7 @@ $service = new ZSAService($contextPlayer, $repository);
           </ul>
         </li>
       </ul>
-      <form class="navbar-form navbar-left" role="search">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search">
-        </div>
-        <button type="submit" class="btn btn-default">Submit</button>
-      </form>
+
       <ul class="nav navbar-nav navbar-right">
         <li><a href="#">email: <?php echo $email; ?></a></li>
         <li class="dropdown">
@@ -97,20 +190,6 @@ $service = new ZSAService($contextPlayer, $repository);
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
-
-
-
-
-
-
-<h1>ZSA WUI</h1>
-<p><b>WebAPI:</b>&nbsp;
-<a href="index.php">camps</a>&nbsp;|&nbsp;
-<a href="index.php?page=field">field</a>&nbsp;|&nbsp;
-<a href="index.php?page=messages">messages</a>&nbsp;|&nbsp;
-<b>Internal:</b>&nbsp;
-<a href="index.php?page=queue">queue</a>&nbsp;|&nbsp;
-</p>
 
 <?php
 if (isset($_GET["page"])) {

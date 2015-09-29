@@ -58,9 +58,9 @@ class ZSAApiController extends BaseWebApiController {
 		return $threads;
 	}
 
-	public function getLeaderboardPlayers() {
+	public function getPlayers() {
 		$service = new ZSAService($this->contextPlayer, $this->repository);		
-		$players = $service->getLeaderBoardPlayers();
+		$players = $service->getPlayers();
 		return $players;
 	}
 
@@ -170,15 +170,47 @@ class ZSAApiController extends BaseWebApiController {
 		return $messages;
 	}
 	
-	public function getInvitations() {
+	public function getPlayerInvitations() {
 		$service = new ZSAService($this->contextPlayer, $this->repository);		
-		$invitations = $service->getOwnInvitations();
+		$invitations = $service->getPlayerInvitations();
 		return $invitations;
+	}
+
+	public function getClanInvitations() {
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
+		$invitations = $service->getClanInvitations();
+		return $invitations;
+	}
+	
+	public function getClanFeedItems() {
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
+		$items = $service->getClanFeedItems();
+		return $items;
 	}
 	
 	public function getAccount() {
 		$this->contextAccount->password = null; // security
 		return $this->contextAccount;
+	}
+	
+	public function getClans() {
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
+		$clans = $service->getClans();
+		return $clans;
+	}
+
+	public function getClanDiplomacy() {
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
+		$clans = $service->getClanDiplomacy();
+		return $clans;
+	}
+	
+	public function setDiplomacy($parameters) {
+		$id = $this->getId($parameters);
+		$body = file_get_contents('php://input');
+		$diplomacy = Diplomacy::createModelFromJson($body);
+		$service = new ZSAService($this->contextPlayer, $this->repository);		
+		$service->setDiplomacy($id, $diplomacy->status);
 	}
 
 	public function getPlayer($parameters) {

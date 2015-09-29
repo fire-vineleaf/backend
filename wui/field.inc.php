@@ -1,3 +1,85 @@
+<style>
+.hex {
+    float: left;
+    margin-right: -26px;
+    margin-bottom: -50px;
+}
+.hex .left {
+    float: left;
+    width: 0;
+    border-right: 30px solid #6C6;
+    border-top: 52px solid transparent;
+    border-bottom: 52px solid transparent;
+}
+.hex .middle {
+    float: left;
+    width: 60px;
+    height: 104px;
+    background: #6C6;
+}
+.hex .right {
+    float: left;
+    width: 0;
+    border-left: 30px solid #6C6;
+    border-top: 52px solid transparent;
+    border-bottom: 52px solid transparent;
+}
+.hex-row {
+    clear: left;
+}
+.hex.even {
+    margin-top: 53px;
+}
+
+.field {
+	width: 40px;
+	height: 40px;
+	padding: 10px;
+}
+.field0 {
+	background-color: #5FA9C2;
+}
+.field1 {
+	background-color: #78C25F;
+}
+.field2 {
+	background-color: #A95FC2;
+}
+.field3 {
+	background-color: #C2785F;
+}
+.field4 {
+	background-color: #D1CE38;
+}
+.field5 {
+	background-color: #38D181;
+}
+.fieldObject {
+	background-color: #CCCCCC;
+}
+.status0 {
+	background-color: #AAAAAA;
+}
+.status1 {
+	background-color: red;
+}
+.status2 {
+	background-color: green;
+}
+.status3 {
+	background-color: orange;
+}
+.status4 {
+	background-color: blue;
+}
+
+</style>
+<script>
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+
+</script>
 <?php
 if (isset($_GET["x"])) {
 	$centerX = $_GET["x"];
@@ -23,36 +105,6 @@ echo "<h2>section</h2>";
 echo "<p>".$section->x1."/".$section->y1." - ".$section->x2."/".$section->y2." | center $centerX/$centerY</p>";
 
 ?>
-<style>
-.field {
-	width: 40px;
-	height: 40px;
-}
-.field0 {
-	background-color: #5FA9C2;
-}
-.field1 {
-	background-color: #78C25F;
-}
-.field2 {
-	background-color: #A95FC2;
-}
-.field3 {
-	background-color: #C2785F;
-}
-.field4 {
-	background-color: #D1CE38;
-}
-.field5 {
-	background-color: #38D181;
-}
-</style>
-<script>
-$(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-})
-
-</script>
 
 <div class="row">
 <div class="col-md-8">
@@ -64,12 +116,20 @@ for ($y = $section->y1; $y<=$section->y2; $y++) {
 	for ($x = $section->x1;$x<=$section->x2;$x++) {
 		$field = $section->fields[$i];
 		$tooltip = "id: ".$field->fieldId.", type: ".$field->type." (".$field->x."/".$field->y.")";
-		echo "<td class='field field".$field->type."'>";
-		echo "<div data-toggle='tooltip' title='".$tooltip."'>";
-		if (is_null($field->objectId)) {
-		echo "&nbsp;";
+		$isObject = !is_null($field->objectId);
+		echo "<td class='field ";
+		if ($isObject) {
+			echo "fieldObject";
 		} else {
-		echo "<a href='index.php?page=camp&id=".$field->objectId."'><b>T</b></a>";
+			echo "field".$field->type;
+		}
+		echo "'>";
+		echo "<div data-toggle='tooltip' title='".$tooltip."'>";
+		if (!$isObject) {
+			echo "&nbsp;";
+		} else {
+			echo "<span class=\"status".$field->clan->status."\">&nbsp;&nbsp;</span>";
+			echo "<a href='index.php?page=camp&id=".$field->objectId."'><b>".$field->camp->name."</b></a><br/>".$field->camp->points;
 		}
 		//echo "(".$field->x."/".$field->y.")";
 		//echo "(".$x."/".$y.")";

@@ -3,7 +3,7 @@
 <?php
 if (isset($_POST["subject"])) {
 	$message = new Message();
-	$message->participants[] = $_POST["to"];
+	$message->participants[] = $_POST["playerId"];
 	$message->subject = $_POST["subject"];
 	$message->content = $_POST["content"];
 	$message = $service->createMessage($message);
@@ -11,17 +11,17 @@ if (isset($_POST["subject"])) {
 
 $messages = $service->getMessages();
 foreach ($messages as $m) {
-	echo "<li><a href='index.php?page=message&id=".$m->messageId."'>".$m->subject."</a>(isRead: ".$m->isRead.")<br/>".date(DATE_RFC822, $m->createdAt)." - <a href='index.php?page=user&id=".$m->createdBy."'>".$m->createdByPlayer->name."</a></li>";
+	echo "<li><a href='index.php?page=message&id=".$m->messageId."'>".$m->subject."</a>(isRead: ".$m->isRead.")<br/>";
+	echoDate($m->createdAt);
+	echo " - ";
+	echoPlayer($m->createdByPlayer);
+	echo "</li>";
 }
 ?>
 </ol>
-
+<h2>new message</h2>
 <form method="post">
-<p>to: <select name="to"><?php
-for ($i=1;$i<= 200;$i++) {
-	echo "<option value=\"$i\">Player$i</option>";
-}
-?></select></p>
+<p>to: <?php echoSelectPlayer(); ?></p>
 <p>subject: <input type="text" name="subject"></p>
 <p>content: <textarea name="content"></textarea></p>
 <input type="submit" value="send">

@@ -53,10 +53,19 @@ switch ($requestMethod) {
 		$method = "getCamps";
 		break;
 		case "invitations":
-		$method = "getInvitations";
+		$method = "getPlayerInvitations";
+		break;
+		case "claninvitations":
+		$method = "getClanInvitations";
+		break;
+		case "clanfeeditems":
+		$method = "getClanFeedItems";
 		break;
 		case "account":
 		$method = "getAccount";
+		break;
+		case "clans":
+		$method = "getClans";
 		break;
 		case "camp":
 		$method = "getCamp";
@@ -67,8 +76,11 @@ switch ($requestMethod) {
 		case "posts":
 		$method = "getPosts";
 		break;
-		case "leaderboardplayers":
-		$method = "getLeaderboardPlayers";
+		case "players":
+		$method = "getPlayers";
+		break;
+		case "diplomacy":
+		$method = "getClanDiplomacy";
 		break;
 		case "messages":
 		$method = "getMessages";
@@ -99,6 +111,9 @@ switch ($requestMethod) {
 	switch ($action) {
 		case "clan":
 		$method = "createClan";
+		break;
+		case "diplomacy":
+		$method = "setDiplomacy";
 		break;
 		case "leave":
 		$method = "leaveClan";
