@@ -100,30 +100,42 @@ $response = \Httpful\Request::get($url)
 	->authenticateWith($email, $password)
     ->send();
 $section =$response->body;
-
-echo "<h2>section</h2>";
-echo "<p>".$section->x1."/".$section->y1." - ".$section->x2."/".$section->y2." | center $centerX/$centerY</p>";
-
 ?>
-
 <div class="row">
-<div class="col-md-8">
-<table cellpadding=0 cellspacing=2>
+	<div class="col-md-3"><h2>section</h2></div>
+	<div class="col-md-3"><?php echo "<p>".$section->x1."/".$section->y1." - ".$section->x2."/".$section->y2." | center $centerX/$centerY</p>"; ?></div>
+	<div class="col-md-3">
+	<a href="index.php?page=field&x=<?php echo $centerX-5;?>&y=<?php echo $centerY;?>">left</a>&nbsp;|&nbsp;
+	<a href="index.php?page=field&x=<?php echo $centerX+5;?>&y=<?php echo $centerY;?>">right</a>&nbsp;|&nbsp;
+	<a href="index.php?page=field&x=<?php echo $centerX;?>&y=<?php echo $centerY+10;?>">up</a>&nbsp;|&nbsp;
+	<a href="index.php?page=field&x=<?php echo $centerX;?>&y=<?php echo $centerY-10;?>">down</a>&nbsp;|&nbsp;
+	</div>
+</div>
 <?php
 $i = 0;
+$j = 0;
 for ($y = $section->y1; $y<=$section->y2; $y++) {
-	echo "<tr>";
+	echo "<div class=\"hex-row\">";
+	$j++;
+	$divider = $j%2;
 	for ($x = $section->x1;$x<=$section->x2;$x++) {
 		$field = $section->fields[$i];
 		$tooltip = "id: ".$field->fieldId.", type: ".$field->type." (".$field->x."/".$field->y.")";
 		$isObject = !is_null($field->objectId);
-		echo "<td class='field ";
+		$even = "";
+		if ($i%2==$divider) {
+			$even = " even";
+		}
+		echo "<div class='hex$even'>";
+		echo "<div class='left'></div>";
+		echo "<div class='middle field ";
 		if ($isObject) {
 			echo "fieldObject";
 		} else {
 			echo "field".$field->type;
 		}
 		echo "'>";
+		
 		echo "<div data-toggle='tooltip' title='".$tooltip."'>";
 		if (!$isObject) {
 			echo "&nbsp;";
@@ -133,19 +145,12 @@ for ($y = $section->y1; $y<=$section->y2; $y++) {
 		}
 		//echo "(".$field->x."/".$field->y.")";
 		//echo "(".$x."/".$y.")";
-		echo "</div></td>";
+		echo "</div>";
+		echo "</div>";
+		echo "<div class='right'></div>";
+		echo "</div>";
 		$i++;
 	}
-	echo "</tr>";
+	echo "</div>";
 }
 ?>
-</table>
-</div>
-	<div class="col-md-4">
-	<a href="index.php?page=field&x=<?php echo $centerX-5;?>&y=<?php echo $centerY;?>">left</a>&nbsp;|&nbsp;
-	<a href="index.php?page=field&x=<?php echo $centerX+5;?>&y=<?php echo $centerY;?>">right</a>&nbsp;|&nbsp;
-	<a href="index.php?page=field&x=<?php echo $centerX;?>&y=<?php echo $centerY+10;?>">up</a>&nbsp;|&nbsp;
-	<a href="index.php?page=field&x=<?php echo $centerX;?>&y=<?php echo $centerY-10;?>">down</a>&nbsp;|&nbsp;
-	
-	</div>
-</div>

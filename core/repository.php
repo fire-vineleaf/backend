@@ -181,6 +181,43 @@ public function getCampById($id) {
 	}
 }
 
+/**
+ * get Camp by id
+ * @param int $id
+ * @return Camp 
+ */	
+public function getPlayerCamp($id) {
+	$query = "SELECT camp_id, name, player_id, x, y, b1, b2, b3, p1, p2, scores FROM camps where player_id = ?";
+	$stmt = $this->prepare($query);
+	$rc = $stmt->bind_param("i", $id);
+	$this->checkBind($rc);
+	$stmt = $this->execute($stmt);
+	$a = array();
+	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["scores"]);
+	$this->checkBind($rc);
+	if ($stmt->fetch()) {
+		return Camp::CreateModelFromRepositoryArray($a);
+	} else {
+		return null;
+	}
+}
+
+/**
+ * updates Camp 
+ * @param Camp $model
+ * @return Camp 
+ */
+public function updateCampName($model) {
+	$query = "UPDATE camps SET name = ? WHERE camp_id = ?";
+	$stmt = $this->prepare($query);
+	$rc = $stmt->bind_param("si"
+		, $model->name 
+		, $model->campId	);
+	$this->checkBind($rc);
+	$stmt = $this->execute($stmt);	
+	return $model;
+}
+
 public function getPreviousBuildingTask($buildingId) {
 	$query = "SELECT t.task_id, t.finished_at, t.object_id1, t.object_id2, t.type, t.level FROM tasks t, buildings b where t.object_id2 = b.building_id and b.building_id = ? and t.type = ? ORDER BY finished_at DESC, t.task_id DESC";
 	$stmt = $this->mysqli->prepare($query);
@@ -1087,7 +1124,7 @@ public function createPlayer($model) {
  * @return Player 
  */	
 public function getNextFreePlayer() {
-	$query = "SELECT player_id, name, points, clan_id, rights, p3, is_free FROM players";
+	$query = "SELECT player_id, name, points, clan_id, rights, p3, is_free FROM players WHERE is_free = 1";
 	$stmt = $this->prepare($query);
 	$stmt = $this->execute($stmt);
 	$a = array();
@@ -1190,7 +1227,7 @@ public function getThreads($id) {
  * @return Array
  */
 public function getPlayers() {
-	$query = "SELECT player_id, name, points, clan_id, rights, p3 FROM players ORDER BY points DESC";
+	$query = "SELECT player_id, name, points, clan_id, rights, p3 FROM players WHERE is_free = 0 ORDER BY points DESC";
 	$stmt = $this->prepare($query);
 	$stmt = $this->execute($stmt);
 	$a = array();

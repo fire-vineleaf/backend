@@ -26,6 +26,11 @@ class SecurityManager extends BaseManager {
 		$account->createdAt = time();
 		$account->playerId = $player->playerId;
 		$account = $this->repository->createAccount($account);
+		
+		// rename camp
+		$camp = $this->repository->getPlayerCamp($player->playerId);
+		$camp->name = $name;
+		$this->repository->updateCampName($camp);
 		return $player;
 	}
 
