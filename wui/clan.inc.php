@@ -140,7 +140,7 @@ if (isset($_GET["id"])) {
 	</ul>
 	</div>
 	<?php } ?>
-	<?php if ($ownClan) { ?>
+	<?php if ($hasClan && $ownClan) { ?>
 	<div class="col-md-2">
 	<h2>Membership</h2>
 	<p><a href="index.php?page=clan&a=leaveclan">Leave Clan</a></p>

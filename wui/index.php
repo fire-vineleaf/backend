@@ -7,6 +7,10 @@ function echoPlayer($player) {
 function echoClan($clan) {
 	echo $clan->status." <a href=\"index.php?page=clan&id=".$clan->clanId."\">".$clan->name." (".$clan->points.")</a>";
 }
+function echoCamp($camp) {
+	echo "<a href='index.php?page=field&x=".$camp->x."&y=".$camp->y."'>".$camp->name."</a>";
+}
+
 
 function echoSelectPlayer() {
 	echo "<select name=\"playerId\">";
