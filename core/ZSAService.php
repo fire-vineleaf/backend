@@ -521,7 +521,7 @@ class ZSAService extends BaseService {
 		$section->x2 = $x + 5;
 		$section->y1 = $y - 5;
 		$section->y2 = $y + 5;
-		$fields = $this->repository->getSection($section->x1, $section->y1, $section->x2, $section->y2);
+		$fields = $this->repository->getSection($section->x1, $section->y1, $section->x2, $section->y2, $this->contextPlayer->clanId);
 		$section->fields = $fields;
 		return $section;
 	}
@@ -587,6 +587,9 @@ class ZSAService extends BaseService {
 		return $this->repository->getPlayerById($id);
 	}
 
+	public function getDiplomacyOverview() {
+		return $this->repository->getDiplomacyOverview();
+	}
 
 }
 

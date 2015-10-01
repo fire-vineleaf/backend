@@ -10,12 +10,14 @@
     border-right: 30px solid #6C6;
     border-top: 52px solid transparent;
     border-bottom: 52px solid transparent;
+	z-index: 99;
 }
 .hex .middle {
     float: left;
     width: 60px;
     height: 104px;
     background: #6C6;
+	z-index: 100;
 }
 .hex .right {
     float: left;
@@ -23,6 +25,7 @@
     border-left: 30px solid #6C6;
     border-top: 52px solid transparent;
     border-bottom: 52px solid transparent;
+	z-index: 99;
 }
 .hex-row {
     clear: left;
@@ -119,6 +122,7 @@ for ($y = $section->y1; $y<=$section->y2; $y++) {
 	$j++;
 	$divider = $j%2;
 	for ($x = $section->x1;$x<=$section->x2;$x++) {
+		if (!isset($section->fields[$i])) continue;
 		$field = $section->fields[$i];
 		$tooltip = "id: ".$field->fieldId.", type: ".$field->type." (".$field->x."/".$field->y.")";
 		$isObject = !is_null($field->objectId);

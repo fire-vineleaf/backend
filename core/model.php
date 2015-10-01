@@ -356,6 +356,8 @@ abstract class DiplomacyStatus {
 	const Ally = 2;
 	const NAP = 3;
 	const Vassal = 4;
+	
+	public static $labels = array(0 => "Neutral", 1 => "Enemy", 2 => "Ally", 3 => "NAP", 4 => "Vassal");
 }
 
 /**
@@ -440,6 +442,7 @@ class Camp extends BaseModel {
 	public $p2;
 	public $scores;
 	public $buildings = array();
+	public $player;
 }
 
 class Diplomacy extends BaseModel {

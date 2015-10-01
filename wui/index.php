@@ -5,7 +5,7 @@ function echoPlayer($player) {
 }
 
 function echoClan($clan) {
-	echo $clan->status." <a href=\"index.php?page=clan&id=".$clan->clanId."\">".$clan->name." (".$clan->points.")</a>";
+	echo DiplomacyStatus::$labels[$clan->status]." <a href=\"index.php?page=clan&id=".$clan->clanId."\">".$clan->name." (".$clan->points.")</a>";
 }
 function echoCamp($camp) {
 	echo "<a href='index.php?page=field&x=".$camp->x."&y=".$camp->y."'>".$camp->name."</a>";
@@ -168,6 +168,7 @@ $service = new ZSAService($contextPlayer, $repository);
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Internal <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="index.php?page=queue">Queue</a></li>
+            <li><a href="index.php?page=diplomacy">Diplomacy</a></li>
             <li><a href="#">Another action</a></li>
             <li><a href="#">Something else here</a></li>
             <li role="separator" class="divider"></li>

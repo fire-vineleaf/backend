@@ -166,16 +166,21 @@ public function getPlayerCamps($playerId) {
  * @return Camp 
  */	
 public function getCampById($id) {
-	$query = "SELECT camp_id, name, player_id, x, y, b1, b2, b3, p1, p2, scores FROM camps where camp_id = ?";
+	$query = "SELECT c.camp_id, c.name, c.player_id, c.x, c.y, c.b1, c.b2, c.b3, c.p1, c.p2, c.scores, pl.name, pl.points FROM camps c, players pl where c.player_id = pl.player_id AND camp_id = ?";
 	$stmt = $this->prepare($query);
 	$rc = $stmt->bind_param("i", $id);
 	$this->checkBind($rc);
 	$stmt = $this->execute($stmt);
 	$a = array();
-	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["scores"]);
+	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["scores"], $a["playerName"], $a["playerPoints"]);
 	$this->checkBind($rc);
 	if ($stmt->fetch()) {
-		return Camp::CreateModelFromRepositoryArray($a);
+		$c = Camp::CreateModelFromRepositoryArray($a);
+		$c->player = array();
+		$c->player["playerId"] = $a["playerId"];
+		$c->player["name"] = $a["playerName"];
+		$c->player["points"] = $a["playerPoints"];
+		return $c;
 	} else {
 		return null;
 	}
@@ -929,14 +934,16 @@ public function createBuilding($model) {
  * retrieves all Fields
  * @return Array
  */
-public function getSection($x1, $y1, $x2, $y2) {
+public function getSection($x1, $y1, $x2, $y2, $clanId) {
 	//$query = "SELECT field_id, type, x, y, object_id FROM fields WHERE x >= ? and x <= ? and y >= ? and y <= ? order by y, x";
 	$query = "SELECT f.field_id, f.type, f.x, f.y, c.camp_id, c.name, c.scores FROM fields f LEFT OUTER JOIN camps c ON f.object_id = c.camp_id WHERE f.x >= ? and f.x <= ? and f.y >= ? and f.y <= ? order by f.y, f.x";
+	$query = "SELECT f.field_id, f.type, f.x, f.y, c.camp_id, c.name, c.scores, d.status FROM fields f LEFT OUTER JOIN camps c ON f.object_id = c.camp_id left outer join players pl on c.player_id = pl.player_id left outer join diplomacies d on d.clan2_id = pl.clan_id and d.clan1_id = ? WHERE f.x >= ? and f.x <= ? and f.y >= ? and f.y <= ? order by f.y, f.x";
 	$stmt = $this->mysqli->prepare($query);
 	if ($stmt === false) {
 		throw new RepositoryException($this->mysqli->error, $this->mysqli->errno);
 	}
-		$rc = $stmt->bind_param("iiii"
+		$rc = $stmt->bind_param("iiiii"
+			, $clanId
 			, $x1
 			, $x2
 			, $y1
@@ -946,7 +953,7 @@ public function getSection($x1, $y1, $x2, $y2) {
 		throw new RepositoryException($stmt->error, $stmt->errno);
 	}
 	$a = array();
-	$rc = $stmt->bind_result($fieldId, $type, $x, $y, $objectId, $campName, $points);
+	$rc = $stmt->bind_result($fieldId, $type, $x, $y, $objectId, $campName, $points, $status);
 	if ($rc === false) {
 		throw new RepositoryException($stmt->error, $stmt->errno);
 	}
@@ -959,10 +966,11 @@ public function getSection($x1, $y1, $x2, $y2) {
 		$field->type = $type;
 		$field->objectId = $objectId;
 		$field->camp = array();
+		$field->camp["campId"] = $objectId;
 		$field->camp["name"] = $campName;
 		$field->camp["points"] = $points;
 		$field->clan = array();
-		$field->clan["status"] = 0;
+		$field->clan["status"] = is_null($status) ? 0 : $status;
 		$models[] = $field;
 	}
 	return $models;
@@ -1395,6 +1403,35 @@ public function createDiplomacy($model) {
 	$model->diplomacyId = $this->mysqli->insert_id;
 	return $model;
 }
+
+/**
+ * get Camp by id
+ * @param int $id
+ * @return Camp 
+ */	
+public function getDiplomacyOverview() {
+	$query = "SELECT d.diplomacy_id, d.clan1_id, c1.name, d.clan2_id, c2.name, d.status FROM `diplomacies` d, clans c1, clans c2 WHERE d.clan1_id = c1.clan_id and d.clan2_id = c2.clan_id order by clan1_id, clan2_id";
+	$stmt = $this->prepare($query);
+	$stmt = $this->execute($stmt);
+	$a = array();
+	$rc = $stmt->bind_result($a["diplomacyId"], $a["clan1Id"], $a["clan1Name"], $a["clan2Id"], $a["clan2Name"], $a["status"]);
+	$this->checkBind($rc);
+	$cs = array();
+	while ($stmt->fetch()) {
+		$c= array();
+		$c["diplomacyId"] = $a["diplomacyId"];
+		$c["clan1"] = new Clan();
+		$c["clan1"]->clanId = $a["clan1Id"];
+		$c["clan1"]->name = $a["clan1Name"];
+		$c["clan2"] = new Clan();
+		$c["clan2"]->clanId = $a["clan2Id"];
+		$c["clan2"]->name = $a["clan2Name"];
+		$c["status"] = $a["status"];
+		$cs[] = $c;
+	}
+	return $cs;
+}
+
 }
 
 ?>
