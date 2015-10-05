@@ -146,12 +146,12 @@ public function getBuildingById($id) {
  * @return Array
  */
 public function getPlayerCamps($playerId) {
-	$query = "SELECT camp_id, name, player_id, x, y, b1, b2, b3, p1, p2, scores FROM camps WHERE player_id = ?";
+	$query = "SELECT camp_id, name, player_id, x, y, b1, b2, b3, p1, p2, points FROM camps WHERE player_id = ?";
 	$stmt = $this->prepare($query);
 	$rc = $stmt->bind_param("i", $playerId);
 	$stmt = $this->execute($stmt);
 	$a = array();
-	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["scores"]);
+	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["points"]);
 	$this->checkBind($rc);
 	$models = array();
 	while ($stmt->fetch()) {
@@ -166,13 +166,13 @@ public function getPlayerCamps($playerId) {
  * @return Camp 
  */	
 public function getCampById($id) {
-	$query = "SELECT c.camp_id, c.name, c.player_id, c.x, c.y, c.b1, c.b2, c.b3, c.p1, c.p2, c.scores, pl.name, pl.points FROM camps c, players pl where c.player_id = pl.player_id AND camp_id = ?";
+	$query = "SELECT c.camp_id, c.name, c.player_id, c.x, c.y, c.b1, c.b2, c.b3, c.p1, c.p2, c.points, pl.name, pl.points FROM camps c, players pl where c.player_id = pl.player_id AND camp_id = ?";
 	$stmt = $this->prepare($query);
 	$rc = $stmt->bind_param("i", $id);
 	$this->checkBind($rc);
 	$stmt = $this->execute($stmt);
 	$a = array();
-	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["scores"], $a["playerName"], $a["playerPoints"]);
+	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["points"], $a["playerName"], $a["playerPoints"]);
 	$this->checkBind($rc);
 	if ($stmt->fetch()) {
 		$c = Camp::CreateModelFromRepositoryArray($a);
@@ -192,13 +192,13 @@ public function getCampById($id) {
  * @return Camp 
  */	
 public function getPlayerCamp($id) {
-	$query = "SELECT camp_id, name, player_id, x, y, b1, b2, b3, p1, p2, scores FROM camps where player_id = ?";
+	$query = "SELECT camp_id, name, player_id, x, y, b1, b2, b3, p1, p2, points FROM camps where player_id = ?";
 	$stmt = $this->prepare($query);
 	$rc = $stmt->bind_param("i", $id);
 	$this->checkBind($rc);
 	$stmt = $this->execute($stmt);
 	$a = array();
-	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["scores"]);
+	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["points"]);
 	$this->checkBind($rc);
 	if ($stmt->fetch()) {
 		return Camp::CreateModelFromRepositoryArray($a);
@@ -217,6 +217,48 @@ public function updateCampName($model) {
 	$stmt = $this->prepare($query);
 	$rc = $stmt->bind_param("si"
 		, $model->name 
+		, $model->campId	);
+	$this->checkBind($rc);
+	$stmt = $this->execute($stmt);	
+	return $model;
+}
+
+/**
+ * updates Camp 
+ * @param Camp $model
+ * @return Camp 
+ */
+public function updateCampPoints($model) {
+	$query = "UPDATE camps SET points = ? WHERE camp_id = ?";
+	$stmt = $this->prepare($query);
+	$rc = $stmt->bind_param("ii"
+		, $model->points
+		, $model->campId	);
+	$this->checkBind($rc);
+	$stmt = $this->execute($stmt);	
+	return $model;
+}
+
+/**
+ * updates Camp 
+ * @param Camp $model
+ * @return Camp 
+ */
+public function updateCamp($model) {
+	$query = "UPDATE camps SET name = ?, player_id = ?, x = ?, y = ?, b1 = ?, b2 = ?, b3 = ?, p1 = ?, p2 = ?, points = ? WHERE camp_id = ?";
+	$stmt = $this->prepare($query);
+	$rc = $stmt->bind_param("siiiiiiiiii"
+		, $model->name
+, $model->playerId
+, $model->x
+, $model->y
+, $model->b1
+, $model->b2
+, $model->b3
+, $model->p1
+, $model->p2
+, $model->points
+ 
 		, $model->campId	);
 	$this->checkBind($rc);
 	$stmt = $this->execute($stmt);	
@@ -327,14 +369,13 @@ public function createTask($model) {
  * retrieves all Tasks
  * @return Array
  */
-public function getDueTasks() {
+public function getDueTasks($time) {
 	$query = "SELECT task_id, finished_at, object_id1, object_id2, type, level FROM tasks WHERE finished_at <= ? ORDER BY finished_at";
 	$stmt = $this->mysqli->prepare($query);
 	if ($stmt === false) {
 		throw new RepositoryException($this->mysqli->error, $this->mysqli->errno);
 	}
-	$t = time();
-	$rc = $stmt->bind_param("i", $t);
+	$rc = $stmt->bind_param("i", $time);
 	if ($rc === false) {
 		throw new RepositoryException($stmt->error, $stmt->errno);
 	}
@@ -890,7 +931,7 @@ public function deleteParticipant($playerId, $messageId) {
  * @return Camp 
  */	
 public function createCamp($model) {
-	$query = "INSERT INTO camps (name, player_id, x, y, b1, b2, b3, p1, p2, scores) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	$query = "INSERT INTO camps (name, player_id, x, y, b1, b2, b3, p1, p2, points) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	$stmt = $this->prepare($query);
 	$rc = $stmt->bind_param("siiiiiiiii"
 		, $model->name
@@ -902,7 +943,7 @@ public function createCamp($model) {
 , $model->b3
 , $model->p1
 , $model->p2
-, $model->scores
+, $model->points
 	);
 	$this->checkBind($rc);
 	$stmt = $this->execute($stmt);
@@ -936,8 +977,8 @@ public function createBuilding($model) {
  */
 public function getSection($x1, $y1, $x2, $y2, $clanId) {
 	//$query = "SELECT field_id, type, x, y, object_id FROM fields WHERE x >= ? and x <= ? and y >= ? and y <= ? order by y, x";
-	$query = "SELECT f.field_id, f.type, f.x, f.y, c.camp_id, c.name, c.scores FROM fields f LEFT OUTER JOIN camps c ON f.object_id = c.camp_id WHERE f.x >= ? and f.x <= ? and f.y >= ? and f.y <= ? order by f.y, f.x";
-	$query = "SELECT f.field_id, f.type, f.x, f.y, c.camp_id, c.name, c.scores, d.status FROM fields f LEFT OUTER JOIN camps c ON f.object_id = c.camp_id left outer join players pl on c.player_id = pl.player_id left outer join diplomacies d on d.clan2_id = pl.clan_id and d.clan1_id = ? WHERE f.x >= ? and f.x <= ? and f.y >= ? and f.y <= ? order by f.y, f.x";
+	$query = "SELECT f.field_id, f.type, f.x, f.y, c.camp_id, c.name, c.points FROM fields f LEFT OUTER JOIN camps c ON f.object_id = c.camp_id WHERE f.x >= ? and f.x <= ? and f.y >= ? and f.y <= ? order by f.y, f.x";
+	$query = "SELECT f.field_id, f.type, f.x, f.y, c.camp_id, c.name, c.points, d.status FROM fields f LEFT OUTER JOIN camps c ON f.object_id = c.camp_id left outer join players pl on c.player_id = pl.player_id left outer join diplomacies d on d.clan2_id = pl.clan_id and d.clan1_id = ? WHERE f.x >= ? and f.x <= ? and f.y >= ? and f.y <= ? order by f.y, f.x";
 	$stmt = $this->mysqli->prepare($query);
 	if ($stmt === false) {
 		throw new RepositoryException($this->mysqli->error, $this->mysqli->errno);
@@ -1430,6 +1471,81 @@ public function getDiplomacyOverview() {
 		$cs[] = $c;
 	}
 	return $cs;
+}
+
+/**
+ * retrieves all LeaderboardItems
+ * @return Array
+ */
+public function getLeaderboardItems() {
+	$query = "SELECT item_id, rank, player_id, player_name, player_points FROM leaderboard_items ORDER BY rank ASC";
+	$stmt = $this->prepare($query);
+	$stmt = $this->execute($stmt);
+	$a = array();
+	$rc = $stmt->bind_result($a["itemId"], $a["rank"], $a["playerId"], $a["playerName"], $a["playerPoints"]);
+	$this->checkBind($rc);
+	$models = array();
+	while ($stmt->fetch()) {
+		$models[] = LeaderboardItem::CreateModelFromRepositoryArray($a);
+	}
+	return $models;
+}
+/**
+ * deletes LeaderboardItems
+ */	
+public function resetLeaderboard() {
+	$query = "DELETE FROM leaderboard_items";
+	$stmt = $this->prepare($query);
+	$stmt = $this->execute($stmt);
+	$query = "ALTER TABLE leaderboard_items AUTO_INCREMENT = 1";
+	$stmt = $this->prepare($query);
+	$stmt = $this->execute($stmt);
+}
+
+/**
+ * creates LeaderboardItem 
+ * @param LeaderboardItem $model
+ * @return LeaderboardItem 
+ */	
+public function createLeaderboardItem($model) {
+	$query = "INSERT INTO leaderboard_items (rank, player_id, player_name, player_points) VALUES ( ?, ?, ?, ?)";
+	$stmt = $this->prepare($query);
+	$rc = $stmt->bind_param("iisi"
+		, $model->rank
+, $model->playerId
+, $model->playerName
+, $model->playerPoints
+	);
+	$this->checkBind($rc);
+	$stmt = $this->execute($stmt);
+	$model->itemId = $this->mysqli->insert_id;
+	return $model;
+}
+
+/**
+ * retrieves all Camps
+ * @return Array
+ */
+public function getCamps() {
+	$query = "SELECT camp_id, name, player_id, x, y, b1, b2, b3, p1, p2, points FROM camps";
+	$stmt = $this->prepare($query);
+	$stmt = $this->execute($stmt);
+	$a = array();
+	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["points"]);
+	$this->checkBind($rc);
+	$models = array();
+	while ($stmt->fetch()) {
+		$models[] = Camp::CreateModelFromRepositoryArray($a);
+	}
+	return $models;
+}
+
+/**
+ * executes an arbitrary query
+ */
+public function executeQuery($query) {
+	$stmt = $this->prepare($query);
+	$stmt = $this->execute($stmt);
 }
 
 }

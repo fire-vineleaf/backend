@@ -1,23 +1,15 @@
 <?php
 $id = $_GET["id"];
 
-$url = $baseUrl."?a=camp&id=$id";
-var_dump($url);
-$response = \Httpful\Request::get($url)
-    ->expectsJson()
-	->authenticateWith($email, $password)
-    ->send();
-$camp = $response->body;
+if (isset($_GET["buildingId"])) {
+	$buildingId = $_GET["buildingId"];
+	$service->queueUpgradeBuilding($buildingId);
+	
+}
 
-$url = $baseUrl."?a=campqueue&id=$id";
-var_dump($url);
-$response = \Httpful\Request::get($url)
-    ->expectsJson()
-	->authenticateWith($email, $password)
-    ->send();
-$tasks = $response->body;
-
-
+$camp = $service->getCamp($id);
+$buildings = $service->getBuildings($id);
+$tasks = $service->getCampQueue($id);
 
 echo "<h2>".$camp->name." (".$camp->campId.")</h2>";
 echo "<p>b1: ".$camp->b1."&nbsp;|&nbsp;";
@@ -25,7 +17,7 @@ echo "b2: ".$camp->b2."&nbsp;|&nbsp;";
 echo "b3: ".$camp->b3."&nbsp;|&nbsp;";
 echo "p1: ".$camp->p1."&nbsp;|&nbsp;";
 echo "p2: ".$camp->p2."&nbsp;|&nbsp;";
-echo "scores: ".$camp->scores."</p>";
+echo "points: ".$camp->points."</p>";
 
 ?>
 
@@ -39,7 +31,12 @@ echo "scores: ".$camp->scores."</p>";
 		<ul>
 	<?php
 	foreach ($camp->buildings as $b) {
-		echo "<li>id: ".$b->buildingId.", type: ".$b->type.", level: ".$b->level."</li>";
+		echo "<li>";
+		echo "id: ".$b->buildingId.", type: ".$b->type.", level: ".$b->level;
+		if (isset($config["buildings"][$b->type][$b->level+1])) {
+			echo " - <a href=\"?page=managecamp&id=$id&buildingId=".$b->buildingId."\">Upgrade</a>";
+		}
+		echo "</li>";
 	}
 	?>
 		</ul>
@@ -48,7 +45,9 @@ echo "scores: ".$camp->scores."</p>";
 	<ul>
 	<?php
 	foreach ($tasks as $t) {
-		echo "<li>id: ".$t->taskId.", finishedAt: ".$t->finishedAt.", type: ".$t->type.", oid1: ".$t->objectId1.", oid2: ".$t->objectId2.", level: ".$t->level."</li>";
+		echo "<li>";
+		echo "id: ".$t->taskId.", finishedAt: ".date(DATE_RFC822, $t->finishedAt).", type: ".$t->type.", oid1: ".$t->objectId1.", oid2: ".$t->objectId2.", level: ".$t->level;
+		echo "</li>";
 	}
 	?>
 	</ul>

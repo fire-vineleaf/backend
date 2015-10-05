@@ -90,17 +90,16 @@ class ZSAService extends BaseService {
 	}
 	
 	private function createCamp($camp) {
+		$numBuildings = 13;
+		$camp->points = $numBuildings;
 		$camp = $this->repository->createCamp($camp);
-		// todo: später wieder an machen
-		/* 
-		for ($i=0;$i<13;$i++) {
+		for ($i=0;$i<$numBuildings;$i++) {
 			$building = new Building();
 			$building->type = $i;
 			$building->campId = $camp->campId;
 			$building->level = 1;
 			$building = $this->repository->createBuilding($building);
 		}
-		*/
 		return $camp;
 	}
 	
@@ -430,14 +429,21 @@ class ZSAService extends BaseService {
 		return $replies;
 	}
 
+	private function checkGameConfig() {
+		if (is_null($this->config)) {
+			throw new Exception("game config not set");
+		}
+	}
+	
 	public function queueUpgradeBuilding($buildingId) {
+		$this->checkGameConfig();
 		$building = $this->repository->getBuildingById($buildingId);
 		$camp = $this->repository->getCampById($building->campId);
 		// determine costs and duration
 		$previousTask = $this->repository->getPreviousBuildingTask($buildingId);
 		$lastTask = $this->repository->getLastCampTask($camp->campId);
 		if (is_null($previousTask)) {
-			$nextLevel = 1;
+			$nextLevel = $building->level;
 		} else {
 			$nextLevel = $previousTask->level;
 		}
@@ -448,6 +454,9 @@ class ZSAService extends BaseService {
 			$finishTime = $lastTask->finishedAt > time() ? $lastTask->finishedAt : time();
 		}
 		if (!isset($this->config["buildings"][$building->type][$nextLevel])) {
+			var_dump($nextLevel);
+			var_dump($building);
+			var_dump($this->config["buildings"][$building->type]);
 
 			throw new Exception("upgrade not possible");
 		}
@@ -491,7 +500,14 @@ class ZSAService extends BaseService {
 	 * processes all tasks that are due
 	 */
 	public function processTasks() {
-		$tasks = $this->repository->getDueTasks();
+		$this->checkGameConfig();
+		if ($this->config["isTest"]) {
+			$time = 9451234513455;
+		} else {
+			$time = time();
+		}
+	
+		$tasks = $this->repository->getDueTasks($time);
 		foreach($tasks as $task) {
 			var_dump($task);
 			switch($task->type) {
@@ -511,15 +527,17 @@ class ZSAService extends BaseService {
 		$building = new Building();
 		$building->buildingId = $task->objectId2;
 		$building->level = $task->level;
-		
 		$this->repository->updateBuildingLevel($building);
+		$camp = $this->repository->getCampById($task->objectId1);
+		$camp->points++;
+		$camp = $this->repository->updateCampPoints($camp);
 	}
 	
 	public function getSection($x ,$y) {
 		$section = new Section();
-		$section->x1 = $x - 5;
+		$section->x1 = ($x - 5) <50000 ? 50000 : ($x -5);
 		$section->x2 = $x + 5;
-		$section->y1 = $y - 5;
+		$section->y1 = ($y - 5) < 50000 ? 50000 : ($y-5);
 		$section->y2 = $y + 5;
 		$fields = $this->repository->getSection($section->x1, $section->y1, $section->x2, $section->y2, $this->contextPlayer->clanId);
 		$section->fields = $fields;
@@ -569,7 +587,7 @@ class ZSAService extends BaseService {
 					$camp->b3 = 0;
 					$camp->p1 = 0;
 					$camp->p2 = 0;
-					$camp->scores = 0;
+					$camp->points = 0;
 
 					$camp = $this->createCamp($camp);
 
@@ -591,6 +609,12 @@ class ZSAService extends BaseService {
 		return $this->repository->getDiplomacyOverview();
 	}
 
+	public function getPlayerLeaderBoard() {
+		return $this->repository->getLeaderboardItems();
+	}
+	public function getBuildings($id) {
+		return $this->repository->getCampBuildings($id);
+	}
 }
 
 ?>

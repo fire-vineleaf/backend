@@ -1,4 +1,10 @@
 <style>
+.caption {
+	font-size: .8em;
+	background-color: white;
+	margin-bottom: 0px;
+	margin-top: auto;
+}
 .hex {
     float: left;
     margin-right: -26px;
@@ -39,26 +45,33 @@
 	height: 40px;
 	padding: 10px;
 }
-.field0 {
-	background-color: #5FA9C2;
+.hex .field0 {
+	background-image: url("images/lake.png");
+	background-repeat: no-repeat;
 }
-.field1 {
-	background-color: #78C25F;
+.hex .field1 {
+	background-image: url("images/grass.png");
+	background-repeat: no-repeat;
 }
-.field2 {
-	background-color: #A95FC2;
+.hex .field2 {
+	background-image: url("images/bushes.png");
+	background-repeat: no-repeat;
 }
-.field3 {
-	background-color: #C2785F;
+.hex .field3 {
+	background-image: url("images/lake.png");
+	background-repeat: no-repeat;
 }
-.field4 {
-	background-color: #D1CE38;
+.hex .field4 {
+	background-image: url("images/rocks.png");
+	background-repeat: no-repeat;
 }
-.field5 {
-	background-color: #38D181;
+.hex .field5 {
+	background-image: url("images/deer.png");
+	background-repeat: no-repeat;
 }
-.fieldObject {
-	background-color: #CCCCCC;
+.hex .fieldObject {
+	background-image: url("images/tree.png");
+	background-repeat: no-repeat;
 }
 .status0 {
 	background-color: #AAAAAA;
@@ -98,11 +111,14 @@ if (isset($_GET["y"])) {
 $url = $baseUrl."?a=section&x=".$centerX."&y=".$centerY;
 var_dump($url);
 
+/*
 $response = \Httpful\Request::get($url)
     ->expectsJson()
 	->authenticateWith($email, $password)
     ->send();
 $section =$response->body;
+*/
+$section = $service->getSection($centerX, $centerY);
 ?>
 <div class="row">
 	<div class="col-md-3"><h2>section</h2></div>
@@ -126,7 +142,8 @@ for ($y = $section->y1; $y<=$section->y2; $y++) {
 		$field = $section->fields[$i];
 		$tooltip = "id: ".$field->fieldId.", type: ".$field->type." (".$field->x."/".$field->y.")";
 		$isObject = !is_null($field->objectId);
-		$even = "";
+		$even = "";		
+		
 		if ($i%2==$divider) {
 			$even = " even";
 		}
@@ -144,8 +161,9 @@ for ($y = $section->y1; $y<=$section->y2; $y++) {
 		if (!$isObject) {
 			echo "&nbsp;";
 		} else {
-			echo "<span class=\"status".$field->clan->status."\">&nbsp;&nbsp;</span>";
-			echo "<a href='index.php?page=camp&id=".$field->objectId."'><b>".$field->camp->name."</b></a><br/>".$field->camp->points;
+			echo "<div class=\"caption\"><span class=\"status".$field->clan["status"]."\">&nbsp;&nbsp;</span>";
+			echo "<a href='index.php?page=camp&id=".$field->objectId."'>";
+			echo "".$field->camp["name"]."</a><br/>".$field->camp["points"]."</div>";
 		}
 		//echo "(".$field->x."/".$field->y.")";
 		//echo "(".$x."/".$y.")";

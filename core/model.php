@@ -440,7 +440,7 @@ class Camp extends BaseModel {
 	public $b3;
 	public $p1;
 	public $p2;
-	public $scores;
+	public $points;
 	public $buildings = array();
 	public $player;
 }
@@ -613,6 +613,14 @@ class Player extends BaseModel {
 
 class Right extends BaseModel {
 	public $right;
+}
+
+class LeaderboardItem extends BaseModel {
+	public $itemId;
+	public $rank;
+	public $playerId;
+	public $playerName;
+	public $playerPoints;
 }
 
 

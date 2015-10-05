@@ -8,7 +8,7 @@ function echoClan($clan) {
 	echo DiplomacyStatus::$labels[$clan->status]." <a href=\"index.php?page=clan&id=".$clan->clanId."\">".$clan->name." (".$clan->points.")</a>";
 }
 function echoCamp($camp) {
-	echo "<a href='index.php?page=field&x=".$camp->x."&y=".$camp->y."'>".$camp->name."</a>";
+	echo "<a href='index.php?page=field&x=".$camp->x."&y=".$camp->y."'>".$camp->name." (".$camp->points.")</a>";
 }
 
 
@@ -111,6 +111,7 @@ if (isset($_SESSION["email"])) {
 }
 
 require("../config.inc.php");
+require("../gameconfig.inc.php");
 require("../includes.inc.php");
 require("../init.inc.php");
 require("httpful.phar");
@@ -120,7 +121,7 @@ $baseUrl = "http://localhost/vineleaf/backend/api.php";
 $securityManager = new SecurityManager($repository);
 $contextPlayer = $securityManager->getPlayerById($contextAccount->playerId);
 $service = new ZSAService($contextPlayer, $repository);
-
+$service->config = $config;
 ?><!DOCTYPE html>
 <html lang="en">
   <head>
@@ -169,6 +170,8 @@ $service = new ZSAService($contextPlayer, $repository);
           <ul class="dropdown-menu">
             <li><a href="index.php?page=queue">Queue</a></li>
             <li><a href="index.php?page=diplomacy">Diplomacy</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="index.php?page=gameconfig">Game Config</a></li>
             <li><a href="#">Another action</a></li>
             <li><a href="#">Something else here</a></li>
             <li role="separator" class="divider"></li>

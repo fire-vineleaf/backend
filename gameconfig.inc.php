@@ -1,5 +1,9 @@
 <?php
 
+require_once("buildings.inc.php");
+$config["isTest"] = true;
+
+/*
 // building type 0 level 1
 $config["buildings"][0][2] = array(
 	"b1" => 100
@@ -20,6 +24,150 @@ $config["buildings"][0][3] = array(
 	);
 // building type 0 level 3
 $config["buildings"][0][4] = array(
+	"b1" => 300
+	,"b2" => 300
+	,"b3" => 300
+	,"p1" => 100
+	,"p2" => 100
+	,"duration" => 30
+	);
+// building type 0 level 3
+$config["buildings"][0][5] = array(
+	"b1" => 49
+	,"b2" => 45
+	,"b3" => 33
+	,"p1" => 100
+	,"p2" => 100
+	,"duration" => 760
+	);
+// building type 0 level 3
+$config["buildings"][0][6] = array(
+	"b1" => 56
+	,"b2" => 53
+	,"b3" => 39
+	,"p1" => 100
+	,"p2" => 100
+	,"duration" => 890
+	);
+// building type 0 level 3
+$config["buildings"][0][7] = array(
+	"b1" => 66
+	,"b2" => 63
+	,"b3" => 46
+	,"p1" => 100
+	,"p2" => 100
+	,"duration" => 1050
+	);
+// building type 0 level 3
+$config["buildings"][0][8] = array(
+	"b1" => 77
+	,"b2" => 75
+	,"b3" => 54
+	,"p1" => 100
+	,"p2" => 100
+	,"duration" => 1239
+	);
+// building type 0 level 3
+$config["buildings"][0][9] = array(
+	"b1" => 90
+	,"b2" => 90
+	,"b3" => 66
+	,"p1" => 100
+	,"p2" => 100
+	,"duration" => 1474
+	);
+// building type 0 level 3
+$config["buildings"][0][10] = array(
+	"b1" => 106
+	,"b2" => 108
+	,"b3" => 78
+	,"p1" => 100
+	,"p2" => 100
+	,"duration" => 1754
+	);
+// building type 0 level 3
+$config["buildings"][0][11] = array(
+	"b1" => 126
+	,"b2" => 130
+	,"b3" => 95
+	,"p1" => 100
+	,"p2" => 100
+	,"duration" => 2105
+	);
+// building type 0 level 3
+$config["buildings"][0][12] = array(
+	"b1" => 150
+	,"b2" => 157
+	,"b3" => 114
+	,"p1" => 100
+	,"p2" => 100
+	,"duration" => 2523
+	);
+// building type 0 level 3
+$config["buildings"][0][13] = array(
+	"b1" => 179
+	,"b2" => 191
+	,"b3" => 139
+	,"p1" => 100
+	,"p2" => 100
+	,"duration" => 3057
+	);
+// building type 0 level 3
+$config["buildings"][0][14] = array(
+	"b1" => 215
+	,"b2" => 232
+	,"b3" => 169
+	,"p1" => 100
+	,"p2" => 100
+	,"duration" => 3699
+	);
+// building type 0 level 3
+$config["buildings"][0][15] = array(
+	"b1" => 259
+	,"b2" => 384
+	,"b3" => 209
+	,"p1" => 100
+	,"p2" => 100
+	,"duration" => 4512
+	);
+// building type 0 level 3
+$config["buildings"][0][16] = array(
+	"b1" => 312
+	,"b2" => 349
+	,"b3" => 256
+	,"p1" => 100
+	,"p2" => 100
+	,"duration" => 5505
+	);
+// building type 0 level 3
+$config["buildings"][0][17] = array(
+	"b1" => 300
+	,"b2" => 300
+	,"b3" => 300
+	,"p1" => 100
+	,"p2" => 100
+	,"duration" => 30
+	);
+// building type 0 level 3
+$config["buildings"][0][18] = array(
+	"b1" => 300
+	,"b2" => 300
+	,"b3" => 300
+	,"p1" => 100
+	,"p2" => 100
+	,"duration" => 30
+	);
+// building type 0 level 3
+$config["buildings"][0][19] = array(
+	"b1" => 300
+	,"b2" => 300
+	,"b3" => 300
+	,"p1" => 100
+	,"p2" => 100
+	,"duration" => 30
+	);
+// building type 0 level 3
+$config["buildings"][0][20] = array(
 	"b1" => 300
 	,"b2" => 300
 	,"b3" => 300
@@ -376,7 +524,7 @@ $config["buildings"][12][4] = array(
 	,"duration" => 30
 	);	
 	
-	
+	*/
 	
 	
 ?>
