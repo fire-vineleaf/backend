@@ -93,15 +93,46 @@ class ZSAService extends BaseService {
 		$numBuildings = 13;
 		$camp->points = $numBuildings;
 		$camp = $this->repository->createCamp($camp);
+
+		$campProperties = array();
 		for ($i=0;$i<$numBuildings;$i++) {
 			$building = new Building();
 			$building->type = $i;
 			$building->campId = $camp->campId;
 			$building->level = 1;
 			$building = $this->repository->createBuilding($building);
+			$campProperties = $this->updateCampProperties($campProperties, $building->type, $building->level);
 		}
+		$camp->properties = $campProperties;
+		$camp = $this->repository->updateCampProperties($camp);
 		return $camp;
 	}
+	
+	private function updateCampProperties($campProperties, $type, $level) {
+		switch ($type) {
+			case BuildingTypes::ProducerB1:
+			$campProperties->pB1 = $this->config["buildings"][$type][$level]["bonus"];
+			break;
+			case BuildingTypes::ProducerB2:
+			$campProperties->pB2 = $this->config["buildings"][$type][$level]["bonus"];
+			break;
+			case BuildingTypes::ProducerB3:
+			$campProperties->pB3 = $this->config["buildings"][$type][$level]["bonus"];
+			break;
+			case BuildingTypes::StoreB1:
+			$campProperties->sB1 = $this->config["buildings"][$type][$level]["bonus"];
+			break;
+			case BuildingTypes::StoreB2:
+			$campProperties->sB2 = $this->config["buildings"][$type][$level]["bonus"];
+			break;
+			case BuildingTypes::StoreB3:
+			$campProperties->sB3 = $this->config["buildings"][$type][$level]["bonus"];
+			break;
+		}
+		return $campProperties;
+	}
+	
+	
 	
 	/**
 	 * Creates a new Field 
@@ -502,14 +533,14 @@ class ZSAService extends BaseService {
 	public function processTasks() {
 		$this->checkGameConfig();
 		if ($this->config["isTest"]) {
-			$time = 9451234513455;
+			$time = 9444138080;
 		} else {
 			$time = time();
 		}
 	
 		$tasks = $this->repository->getDueTasks($time);
 		foreach($tasks as $task) {
-			var_dump($task);
+		var_dump($task);
 			switch($task->type) {
 				case TaskTypes::UpgradeBuilding:
 					echo "TaskTypes::UpgradeBuilding\n";
@@ -524,13 +555,15 @@ class ZSAService extends BaseService {
 	}
 	
 	private function upgradeBuilding($task) {
-		$building = new Building();
-		$building->buildingId = $task->objectId2;
+		$building = $this->repository->getBuildingById($task->objectId2);
 		$building->level = $task->level;
 		$this->repository->updateBuildingLevel($building);
 		$camp = $this->repository->getCampById($task->objectId1);
 		$camp->points++;
 		$camp = $this->repository->updateCampPoints($camp);
+		
+		$camp->properties = $this->updateCampProperties($camp->properties, $building->type, $task->level);
+		$camp = $this->repository->updateCampProperties($camp);
 	}
 	
 	public function getSection($x ,$y) {
@@ -614,6 +647,9 @@ class ZSAService extends BaseService {
 	}
 	public function getBuildings($id) {
 		return $this->repository->getCampBuildings($id);
+	}
+	public function getBuilding($id) {
+		return $this->repository->getBuildingById($id);
 	}
 }
 

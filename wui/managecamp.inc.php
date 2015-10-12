@@ -12,36 +12,42 @@ $buildings = $service->getBuildings($id);
 $tasks = $service->getCampQueue($id);
 
 echo "<h2>".$camp->name." (".$camp->campId.")</h2>";
-echo "<p>b1: ".$camp->b1."&nbsp;|&nbsp;";
-echo "b2: ".$camp->b2."&nbsp;|&nbsp;";
-echo "b3: ".$camp->b3."&nbsp;|&nbsp;";
+echo "<p>b1: ".$camp->b1."/".$camp->properties->sB1."&nbsp;|&nbsp;";
+echo "b2: ".$camp->b2."/".$camp->properties->sB2."&nbsp;|&nbsp;";
+echo "b3: ".$camp->b3."/".$camp->properties->sB3."&nbsp;|&nbsp;";
 echo "p1: ".$camp->p1."&nbsp;|&nbsp;";
 echo "p2: ".$camp->p2."&nbsp;|&nbsp;";
 echo "points: ".$camp->points."</p>";
 
 ?>
 
-<table border=1 width=100%>
-<tr>
-	<th>buildings</th>
-	<th>queue</th>
-</tr>
-<tr>
-	<td>
-		<ul>
+<div class="row">
+	<div class="col-md-5">
 	<?php
 	foreach ($camp->buildings as $b) {
-		echo "<li>";
-		echo "id: ".$b->buildingId.", type: ".$b->type.", level: ".$b->level;
-		if (isset($config["buildings"][$b->type][$b->level+1])) {
-			echo " - <a href=\"?page=managecamp&id=$id&buildingId=".$b->buildingId."\">Upgrade</a>";
+		echo "<div class=\"panel panel-default\">";
+		echo "<div class=\"panel-heading\">";
+		echoBuilding($b);
+		echo "</div>";
+		echo "<div class=\"panel-body\">";
+
+		if (isset($config["buildings"][$b->type][$b->level])) {
+			$c = $config["buildings"][$b->type][$b->level];
+			echo $c["bonus"];
 		}
-		echo "</li>";
+
+		if (isset($config["buildings"][$b->type][$b->level+1])) {
+			$c = $config["buildings"][$b->type][$b->level+1];
+			echo "<br/><a href=\"?page=managecamp&id=$id&buildingId=".$b->buildingId."\">Upgrade</a> - B1: ".$c["b1"]." B2: ".$c["b2"]." B3: ".$c["b3"];
+		}
+
+		echo "</div>";
+		echo "</div>";
 	}
 	?>
-		</ul>
-	</td>
-	<td>
+	</div>
+	<div class="col-md-5">
+	
 	<ul>
 	<?php
 	foreach ($tasks as $t) {
@@ -51,7 +57,5 @@ echo "points: ".$camp->points."</p>";
 	}
 	?>
 	</ul>
-	</td>
-</tr>
-</table>
-
+	</div>
+</div>

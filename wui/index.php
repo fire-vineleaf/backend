@@ -10,7 +10,35 @@ function echoClan($clan) {
 function echoCamp($camp) {
 	echo "<a href='index.php?page=field&x=".$camp->x."&y=".$camp->y."'>".$camp->name." (".$camp->points.")</a>";
 }
+function echoBuilding($building) {
+	echo "<a href='index.php?page=building&id=".$building->buildingId."'>".$building->type.":".getBuildingName($building->type)." (Level ".$building->level.")</a>";
+}
 
+function getBuildingName($type) {
+	switch ($type) {
+		case 10:
+			return "ProducerB1";
+		break;
+		case 11:
+			return "ProducerB2";
+		break;
+		case 12:
+			return "ProducerB3";
+		break;
+		case 7:
+			return "StoreB1";
+		break;
+		case 8:
+			return "StoreB2";
+		break;
+		case 9:
+			return "StoreB3";
+		break;
+		default:
+		return "Type $type";
+		break;
+	}
+}
 
 function echoSelectPlayer() {
 	echo "<select name=\"playerId\">";
@@ -183,7 +211,7 @@ $service->config = $config;
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">email: <?php echo $email; ?></a></li>
+        <li><a href="#"><?php echo $contextPlayer->name; ?> - <?php echo $email; ?></a></li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
           <ul class="dropdown-menu">

@@ -360,6 +360,15 @@ abstract class DiplomacyStatus {
 	public static $labels = array(0 => "Neutral", 1 => "Enemy", 2 => "Ally", 3 => "NAP", 4 => "Vassal");
 }
 
+abstract class BuildingTypes {
+	const ProducerB1 = 10;
+	const ProducerB2 = 11;
+	const ProducerB3 = 12;
+	const StoreB1 = 7;
+	const StoreB2 = 8;
+	const StoreB3 = 9;
+}
+
 /**
  * Validation Results
  * enum
@@ -441,6 +450,8 @@ class Camp extends BaseModel {
 	public $p1;
 	public $p2;
 	public $points;
+	public $properties;
+	
 	public $buildings = array();
 	public $player;
 }
@@ -622,7 +633,5 @@ class LeaderboardItem extends BaseModel {
 	public $playerName;
 	public $playerPoints;
 }
-
-
 
 ?>

@@ -1,6 +1,6 @@
 <?php
-require("../config.inc.php");
-require("../includes.inc.php");
+require_once("../config.inc.php");
+require_once("../includes.inc.php");
 $repository = new MySqlRepository($cfgMySqlHost, $cfgMySqlUserName, $cfgMySqlPassword, $cfgMySqlDatabase, $cfgMySqlPort);
 
 // Step 1: update player points from camp points
@@ -29,4 +29,3 @@ foreach($players as $player) {
 }
 
 ?>
-done

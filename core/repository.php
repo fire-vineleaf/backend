@@ -166,13 +166,13 @@ public function getPlayerCamps($playerId) {
  * @return Camp 
  */	
 public function getCampById($id) {
-	$query = "SELECT c.camp_id, c.name, c.player_id, c.x, c.y, c.b1, c.b2, c.b3, c.p1, c.p2, c.points, pl.name, pl.points FROM camps c, players pl where c.player_id = pl.player_id AND camp_id = ?";
+	$query = "SELECT c.camp_id, c.name, c.player_id, c.x, c.y, c.b1, c.b2, c.b3, c.p1, c.p2, c.points, c.properties, pl.name, pl.points FROM camps c, players pl where c.player_id = pl.player_id AND camp_id = ?";
 	$stmt = $this->prepare($query);
 	$rc = $stmt->bind_param("i", $id);
 	$this->checkBind($rc);
 	$stmt = $this->execute($stmt);
 	$a = array();
-	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["points"], $a["playerName"], $a["playerPoints"]);
+	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["points"], $a["properties"], $a["playerName"], $a["playerPoints"]);
 	$this->checkBind($rc);
 	if ($stmt->fetch()) {
 		$c = Camp::CreateModelFromRepositoryArray($a);
@@ -180,6 +180,7 @@ public function getCampById($id) {
 		$c->player["playerId"] = $a["playerId"];
 		$c->player["name"] = $a["playerName"];
 		$c->player["points"] = $a["playerPoints"];
+		$c->properties = json_decode($a["properties"]);
 		return $c;
 	} else {
 		return null;
@@ -223,6 +224,22 @@ public function updateCampName($model) {
 	return $model;
 }
 
+/**
+ * updates Camp 
+ * @param Camp $model
+ * @return Camp 
+ */
+public function updateCampProperties($model) {#
+	$props = json_encode($model->properties);
+	$query = "UPDATE camps SET properties = ? WHERE camp_id = ?";
+	$stmt = $this->prepare($query);
+	$rc = $stmt->bind_param("si"
+		, $props 
+		, $model->campId	);
+	$this->checkBind($rc);
+	$stmt = $this->execute($stmt);	
+	return $model;
+}
 /**
  * updates Camp 
  * @param Camp $model
@@ -375,7 +392,7 @@ public function getDueTasks($time) {
 	if ($stmt === false) {
 		throw new RepositoryException($this->mysqli->error, $this->mysqli->errno);
 	}
-	$rc = $stmt->bind_param("i", $time);
+	$rc = $stmt->bind_param("d", $time);
 	if ($rc === false) {
 		throw new RepositoryException($stmt->error, $stmt->errno);
 	}
@@ -931,9 +948,9 @@ public function deleteParticipant($playerId, $messageId) {
  * @return Camp 
  */	
 public function createCamp($model) {
-	$query = "INSERT INTO camps (name, player_id, x, y, b1, b2, b3, p1, p2, points) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	$query = "INSERT INTO camps (name, player_id, x, y, b1, b2, b3, p1, p2, points, properties) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	$stmt = $this->prepare($query);
-	$rc = $stmt->bind_param("siiiiiiiii"
+	$rc = $stmt->bind_param("siiiiiiiiis"
 		, $model->name
 , $model->playerId
 , $model->x
@@ -944,6 +961,7 @@ public function createCamp($model) {
 , $model->p1
 , $model->p2
 , $model->points
+, $model->properties
 	);
 	$this->checkBind($rc);
 	$stmt = $this->execute($stmt);
@@ -1527,15 +1545,17 @@ public function createLeaderboardItem($model) {
  * @return Array
  */
 public function getCamps() {
-	$query = "SELECT camp_id, name, player_id, x, y, b1, b2, b3, p1, p2, points FROM camps";
+	$query = "SELECT camp_id, name, player_id, x, y, b1, b2, b3, p1, p2, points, properties FROM camps";
 	$stmt = $this->prepare($query);
 	$stmt = $this->execute($stmt);
 	$a = array();
-	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["points"]);
+	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["points"], $a["properties"]);
 	$this->checkBind($rc);
 	$models = array();
 	while ($stmt->fetch()) {
-		$models[] = Camp::CreateModelFromRepositoryArray($a);
+		$c = Camp::CreateModelFromRepositoryArray($a);
+		$c->properties = json_decode($a["properties"]);
+		$models[] = $c;
 	}
 	return $models;
 }
