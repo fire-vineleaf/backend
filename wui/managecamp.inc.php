@@ -11,7 +11,6 @@ $camp = $service->getCamp($id);
 $buildings = $service->getBuildings($id);
 $tasks = $service->getCampQueue($id);
 
-
 ?>
 
 <div class="row">
@@ -20,11 +19,12 @@ $tasks = $service->getCampQueue($id);
 	echo "<div class=\"panel panel-default\">";
 	echo "<div class=\"panel-heading\">";
 	echo $camp->name." (id: ".$camp->campId.")";
-	echo "b1: ".$camp->b1."/".$camp->properties->sB1."&nbsp;|&nbsp;";
-	echo "b2: ".$camp->b2."/".$camp->properties->sB2."&nbsp;|&nbsp;";
-	echo "b3: ".$camp->b3."/".$camp->properties->sB3."&nbsp;|&nbsp;";
+	echo "b1: ".$camp->b1."/".$camp->properties->sb1."&nbsp;|&nbsp;";
+	echo "b2: ".$camp->b2."/".$camp->properties->sb2."&nbsp;|&nbsp;";
+	echo "b3: ".$camp->b3."/".$camp->properties->sb3."&nbsp;|&nbsp;";
 	echo "p1: ".$camp->p1."&nbsp;|&nbsp;";
 	echo "p2: ".$camp->p2."&nbsp;|&nbsp;";
+	echo "people: ".$camp->people."&nbsp;|&nbsp;";
 	echo "points: ".$camp->points."";
 	echo "</div>";
 	//echo "<div class=\"panel-body\">";
@@ -45,12 +45,12 @@ $tasks = $service->getCampQueue($id);
 		}
 		echo "</li>";
 	}
-		echo "</ul>";
-		echo "</div>";
+	echo "</ul>";
+	echo "</div>";
 	?>
 	</div>
 	<div class="col-md-5">
-	
+	<?php var_dump($camp->properties);?>
 	<ul>
 	<?php
 	foreach ($tasks as $t) {

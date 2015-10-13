@@ -146,12 +146,12 @@ public function getBuildingById($id) {
  * @return Array
  */
 public function getPlayerCamps($playerId) {
-	$query = "SELECT camp_id, name, player_id, x, y, b1, b2, b3, p1, p2, points FROM camps WHERE player_id = ?";
+	$query = "SELECT camp_id, name, player_id, x, y, b1, b2, b3, p1, p2, points, people FROM camps WHERE player_id = ?";
 	$stmt = $this->prepare($query);
 	$rc = $stmt->bind_param("i", $playerId);
 	$stmt = $this->execute($stmt);
 	$a = array();
-	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["points"]);
+	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["points"], $a["people"]);
 	$this->checkBind($rc);
 	$models = array();
 	while ($stmt->fetch()) {
@@ -166,13 +166,13 @@ public function getPlayerCamps($playerId) {
  * @return Camp 
  */	
 public function getCampById($id) {
-	$query = "SELECT c.camp_id, c.name, c.player_id, c.x, c.y, c.b1, c.b2, c.b3, c.p1, c.p2, c.points, c.properties, pl.name, pl.points FROM camps c, players pl where c.player_id = pl.player_id AND camp_id = ?";
+	$query = "SELECT c.camp_id, c.name, c.player_id, c.x, c.y, c.b1, c.b2, c.b3, c.p1, c.p2, c.points, c.properties, pl.name, pl.points, c.people FROM camps c, players pl where c.player_id = pl.player_id AND camp_id = ?";
 	$stmt = $this->prepare($query);
 	$rc = $stmt->bind_param("i", $id);
 	$this->checkBind($rc);
 	$stmt = $this->execute($stmt);
 	$a = array();
-	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["points"], $a["properties"], $a["playerName"], $a["playerPoints"]);
+	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["points"], $a["properties"], $a["playerName"], $a["playerPoints"], $a["people"]);
 	$this->checkBind($rc);
 	if ($stmt->fetch()) {
 		$c = Camp::CreateModelFromRepositoryArray($a);
@@ -193,13 +193,13 @@ public function getCampById($id) {
  * @return Camp 
  */	
 public function getPlayerCamp($id) {
-	$query = "SELECT camp_id, name, player_id, x, y, b1, b2, b3, p1, p2, points FROM camps where player_id = ?";
+	$query = "SELECT camp_id, name, player_id, x, y, b1, b2, b3, p1, p2, points, people FROM camps where player_id = ?";
 	$stmt = $this->prepare($query);
 	$rc = $stmt->bind_param("i", $id);
 	$this->checkBind($rc);
 	$stmt = $this->execute($stmt);
 	$a = array();
-	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["points"]);
+	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["points"], $a["people"]);
 	$this->checkBind($rc);
 	if ($stmt->fetch()) {
 		return Camp::CreateModelFromRepositoryArray($a);
@@ -262,9 +262,9 @@ public function updateCampPoints($model) {
  * @return Camp 
  */
 public function updateCamp($model) {
-	$query = "UPDATE camps SET name = ?, player_id = ?, x = ?, y = ?, b1 = ?, b2 = ?, b3 = ?, p1 = ?, p2 = ?, points = ? WHERE camp_id = ?";
+	$query = "UPDATE camps SET name = ?, player_id = ?, x = ?, y = ?, b1 = ?, b2 = ?, b3 = ?, p1 = ?, p2 = ?, points = ?, people = ? WHERE camp_id = ?";
 	$stmt = $this->prepare($query);
-	$rc = $stmt->bind_param("siiiiiiiiii"
+	$rc = $stmt->bind_param("siiiiiiiiiii"
 		, $model->name
 , $model->playerId
 , $model->x
@@ -275,6 +275,7 @@ public function updateCamp($model) {
 , $model->p1
 , $model->p2
 , $model->points
+, $model->people
  
 		, $model->campId	);
 	$this->checkBind($rc);
@@ -948,9 +949,10 @@ public function deleteParticipant($playerId, $messageId) {
  * @return Camp 
  */	
 public function createCamp($model) {
-	$query = "INSERT INTO camps (name, player_id, x, y, b1, b2, b3, p1, p2, points, properties) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	$props = json_encode($model->properties);
+	$query = "INSERT INTO camps (name, player_id, x, y, b1, b2, b3, p1, p2, points, properties, people) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	$stmt = $this->prepare($query);
-	$rc = $stmt->bind_param("siiiiiiiiis"
+	$rc = $stmt->bind_param("siiiiiiiiisi"
 		, $model->name
 , $model->playerId
 , $model->x
@@ -961,7 +963,8 @@ public function createCamp($model) {
 , $model->p1
 , $model->p2
 , $model->points
-, $model->properties
+, $props
+, $model->people
 	);
 	$this->checkBind($rc);
 	$stmt = $this->execute($stmt);
@@ -1545,11 +1548,11 @@ public function createLeaderboardItem($model) {
  * @return Array
  */
 public function getCamps() {
-	$query = "SELECT camp_id, name, player_id, x, y, b1, b2, b3, p1, p2, points, properties FROM camps";
+	$query = "SELECT camp_id, name, player_id, x, y, b1, b2, b3, p1, p2, points, properties, people FROM camps";
 	$stmt = $this->prepare($query);
 	$stmt = $this->execute($stmt);
 	$a = array();
-	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["points"], $a["properties"]);
+	$rc = $stmt->bind_result($a["campId"], $a["name"], $a["playerId"], $a["x"], $a["y"], $a["b1"], $a["b2"], $a["b3"], $a["p1"], $a["p2"], $a["points"], $a["properties"], $a["people"]);
 	$this->checkBind($rc);
 	$models = array();
 	while ($stmt->fetch()) {

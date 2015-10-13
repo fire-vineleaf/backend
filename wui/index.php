@@ -16,6 +16,21 @@ function echoBuilding($building) {
 
 function getBuildingName($type) {
 	switch ($type) {
+		case 0:
+			return "Keep";
+		break;
+		case 1:
+			return "Baracks";
+		break;
+		case 4:
+			return "Farm";
+		break;
+		case 5:
+			return "Library";
+		break;
+		case 6:
+			return "Fortifications";
+		break;
 		case 10:
 			return "ProducerB1";
 		break;

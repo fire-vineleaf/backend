@@ -94,7 +94,7 @@ class ZSAService extends BaseService {
 		$camp->points = $numBuildings;
 		$camp = $this->repository->createCamp($camp);
 
-		$campProperties = array();
+		$campProperties = $camp->properties;
 		for ($i=0;$i<$numBuildings;$i++) {
 			$building = new Building();
 			$building->type = $i;
@@ -108,29 +108,6 @@ class ZSAService extends BaseService {
 		return $camp;
 	}
 	
-	private function updateCampProperties($campProperties, $type, $level) {
-		switch ($type) {
-			case BuildingTypes::ProducerB1:
-			$campProperties->pB1 = $this->config["buildings"][$type][$level]["bonus"];
-			break;
-			case BuildingTypes::ProducerB2:
-			$campProperties->pB2 = $this->config["buildings"][$type][$level]["bonus"];
-			break;
-			case BuildingTypes::ProducerB3:
-			$campProperties->pB3 = $this->config["buildings"][$type][$level]["bonus"];
-			break;
-			case BuildingTypes::StoreB1:
-			$campProperties->sB1 = $this->config["buildings"][$type][$level]["bonus"];
-			break;
-			case BuildingTypes::StoreB2:
-			$campProperties->sB2 = $this->config["buildings"][$type][$level]["bonus"];
-			break;
-			case BuildingTypes::StoreB3:
-			$campProperties->sB3 = $this->config["buildings"][$type][$level]["bonus"];
-			break;
-		}
-		return $campProperties;
-	}
 	
 	
 	
@@ -621,7 +598,21 @@ class ZSAService extends BaseService {
 					$camp->p1 = 0;
 					$camp->p2 = 0;
 					$camp->points = 0;
-
+					
+					$properties = array();
+					$properties["sb1"] = 0;
+					$properties["sb2"] = 0;
+					$properties["sb3"] = 0;
+					$properties["pb1"] = 0;
+					$properties["pb2"] = 0;
+					$properties["pb3"] = 0;
+					$properties["def"] = 0; // defence bonus
+					$properties["max"] = 0; // max total population
+					$properties["maxb1"] = 0; // max people producing B1
+					$properties["maxb2"] = 0; // max people producing B2
+					$properties["maxb3"] = 0; // max people producing B3
+					$properties["prec"] = 0; // bonus for recruiting persons, coming from keep
+					$camp->properties = json_decode(json_encode($properties));
 					$camp = $this->createCamp($camp);
 
 					$field->objectId = $camp->campId;
@@ -632,6 +623,42 @@ class ZSAService extends BaseService {
 			}
 		}
 		return $numCamps;
+	}
+
+	private function updateCampProperties($campProperties, $type, $level) {
+		switch ($type) {
+			case BuildingTypes::ProducerB1:
+			$campProperties->pb1 = $this->config["buildings"][$type][$level]["bonus"];
+			$campProperties->maxb1 = $this->config["buildings"][$type][$level]["bonus2"];
+			break;
+			case BuildingTypes::ProducerB2:
+			$campProperties->pb2 = $this->config["buildings"][$type][$level]["bonus"];
+			$campProperties->maxb2 = $this->config["buildings"][$type][$level]["bonus2"];
+			break;
+			case BuildingTypes::ProducerB3:
+			$campProperties->pb3 = $this->config["buildings"][$type][$level]["bonus"];
+			$campProperties->maxb3 = $this->config["buildings"][$type][$level]["bonus2"];
+			break;
+			case BuildingTypes::StoreB1:
+			$campProperties->sb1 = $this->config["buildings"][$type][$level]["bonus"];
+			break;
+			case BuildingTypes::StoreB2:
+			$campProperties->sb2 = $this->config["buildings"][$type][$level]["bonus"];
+			break;
+			case BuildingTypes::StoreB3:
+			$campProperties->sb3 = $this->config["buildings"][$type][$level]["bonus"];
+			break;
+			case BuildingTypes::Fortifications:
+			$campProperties->def = $this->config["buildings"][$type][$level]["bonus"];
+			break;
+			case BuildingTypes::Farm:
+			$campProperties->max = $this->config["buildings"][$type][$level]["bonus"];
+			break;
+			case BuildingTypes::Keep:
+			$campProperties->prec = $this->config["buildings"][$type][$level]["bonus2"];
+			break;
+		}
+		return $campProperties;
 	}
 	
 	public function getPlayer($id) {

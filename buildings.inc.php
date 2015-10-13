@@ -9,6 +9,7 @@ $config["buildings"][0][1] = array(
 ,"p2" => 0
 ,"duration" => 0
 ,"bonus" => "40"
+,"bonus2" => "100"
 );
 // building type 0 level 2
 $config["buildings"][0][2] = array(
@@ -20,6 +21,7 @@ $config["buildings"][0][2] = array(
 ,"p2" => 0
 ,"duration" => 1140
 ,"bonus" => "38"
+,"bonus2" => "95"
 );
 // building type 0 level 3
 $config["buildings"][0][3] = array(
@@ -31,6 +33,7 @@ $config["buildings"][0][3] = array(
 ,"p2" => 0
 ,"duration" => 2223
 ,"bonus" => "36"
+,"bonus2" => "90"
 );
 // building type 0 level 4
 $config["buildings"][0][4] = array(
@@ -42,6 +45,7 @@ $config["buildings"][0][4] = array(
 ,"p2" => 0
 ,"duration" => 4224
 ,"bonus" => "34"
+,"bonus2" => "85"
 );
 // building type 0 level 5
 $config["buildings"][0][5] = array(
@@ -53,6 +57,7 @@ $config["buildings"][0][5] = array(
 ,"p2" => 0
 ,"duration" => 7814
 ,"bonus" => "32"
+,"bonus2" => "80"
 );
 // building type 0 level 6
 $config["buildings"][0][6] = array(
@@ -64,6 +69,7 @@ $config["buildings"][0][6] = array(
 ,"p2" => 0
 ,"duration" => 14065
 ,"bonus" => "30"
+,"bonus2" => "75"
 );
 // building type 0 level 7
 $config["buildings"][0][7] = array(
@@ -75,6 +81,7 @@ $config["buildings"][0][7] = array(
 ,"p2" => 0
 ,"duration" => 24614
 ,"bonus" => "28"
+,"bonus2" => "70"
 );
 // building type 0 level 8
 $config["buildings"][0][8] = array(
@@ -86,6 +93,7 @@ $config["buildings"][0][8] = array(
 ,"p2" => 0
 ,"duration" => 41843
 ,"bonus" => "27"
+,"bonus2" => "65"
 );
 // building type 0 level 9
 $config["buildings"][0][9] = array(
@@ -97,6 +105,7 @@ $config["buildings"][0][9] = array(
 ,"p2" => 0
 ,"duration" => 69041
 ,"bonus" => "26"
+,"bonus2" => "60"
 );
 // building type 0 level 10
 $config["buildings"][0][10] = array(
@@ -108,6 +117,7 @@ $config["buildings"][0][10] = array(
 ,"p2" => 0
 ,"duration" => 110466
 ,"bonus" => "25"
+,"bonus2" => "65"
 );
 // building type 1 level 1
 $config["buildings"][1][1] = array(
@@ -1086,7 +1096,7 @@ $config["buildings"][6][1] = array(
 ,"p1" => 0
 ,"p2" => 0
 ,"duration" => 0
-,"bonus" => "10"
+,"bonus" => "5"
 );
 // building type 6 level 2
 $config["buildings"][6][2] = array(
@@ -1967,6 +1977,7 @@ $config["buildings"][10][1] = array(
 ,"p2" => 0
 ,"duration" => 0
 ,"bonus" => "5"
+,"bonus2" => "1"
 );
 // building type 10 level 2
 $config["buildings"][10][2] = array(
@@ -1978,6 +1989,7 @@ $config["buildings"][10][2] = array(
 ,"p2" => 0
 ,"duration" => 180
 ,"bonus" => "7"
+,"bonus2" => "1"
 );
 // building type 10 level 3
 $config["buildings"][10][3] = array(
@@ -1989,6 +2001,7 @@ $config["buildings"][10][3] = array(
 ,"p2" => 0
 ,"duration" => 216
 ,"bonus" => "9"
+,"bonus2" => "1"
 );
 // building type 10 level 4
 $config["buildings"][10][4] = array(
@@ -2000,6 +2013,7 @@ $config["buildings"][10][4] = array(
 ,"p2" => 0
 ,"duration" => 261
 ,"bonus" => "12"
+,"bonus2" => "1"
 );
 // building type 10 level 5
 $config["buildings"][10][5] = array(
@@ -2011,6 +2025,7 @@ $config["buildings"][10][5] = array(
 ,"p2" => 0
 ,"duration" => 316
 ,"bonus" => "15"
+,"bonus2" => "1"
 );
 // building type 10 level 6
 $config["buildings"][10][6] = array(
@@ -2022,6 +2037,7 @@ $config["buildings"][10][6] = array(
 ,"p2" => 0
 ,"duration" => 383
 ,"bonus" => "19"
+,"bonus2" => "2"
 );
 // building type 10 level 7
 $config["buildings"][10][7] = array(
@@ -2033,6 +2049,7 @@ $config["buildings"][10][7] = array(
 ,"p2" => 0
 ,"duration" => 467
 ,"bonus" => "24"
+,"bonus2" => "2"
 );
 // building type 10 level 8
 $config["buildings"][10][8] = array(
@@ -2044,6 +2061,7 @@ $config["buildings"][10][8] = array(
 ,"p2" => 0
 ,"duration" => 570
 ,"bonus" => "30"
+,"bonus2" => "2"
 );
 // building type 10 level 9
 $config["buildings"][10][9] = array(
@@ -2055,6 +2073,7 @@ $config["buildings"][10][9] = array(
 ,"p2" => 0
 ,"duration" => 695
 ,"bonus" => "37"
+,"bonus2" => "2"
 );
 // building type 10 level 10
 $config["buildings"][10][10] = array(
@@ -2066,6 +2085,7 @@ $config["buildings"][10][10] = array(
 ,"p2" => 0
 ,"duration" => 855
 ,"bonus" => "45"
+,"bonus2" => "2"
 );
 // building type 10 level 11
 $config["buildings"][10][11] = array(
@@ -2077,6 +2097,7 @@ $config["buildings"][10][11] = array(
 ,"p2" => 0
 ,"duration" => 1051
 ,"bonus" => "54"
+,"bonus2" => "3"
 );
 // building type 10 level 12
 $config["buildings"][10][12] = array(
@@ -2088,6 +2109,7 @@ $config["buildings"][10][12] = array(
 ,"p2" => 0
 ,"duration" => 1304
 ,"bonus" => "65"
+,"bonus2" => "3"
 );
 // building type 10 level 13
 $config["buildings"][10][13] = array(
@@ -2099,6 +2121,7 @@ $config["buildings"][10][13] = array(
 ,"p2" => 0
 ,"duration" => 1616
 ,"bonus" => "77"
+,"bonus2" => "3"
 );
 // building type 10 level 14
 $config["buildings"][10][14] = array(
@@ -2110,6 +2133,7 @@ $config["buildings"][10][14] = array(
 ,"p2" => 0
 ,"duration" => 2020
 ,"bonus" => "91"
+,"bonus2" => "3"
 );
 // building type 10 level 15
 $config["buildings"][10][15] = array(
@@ -2121,6 +2145,7 @@ $config["buildings"][10][15] = array(
 ,"p2" => 0
 ,"duration" => 2525
 ,"bonus" => "106"
+,"bonus2" => "3"
 );
 // building type 10 level 16
 $config["buildings"][10][16] = array(
@@ -2132,6 +2157,7 @@ $config["buildings"][10][16] = array(
 ,"p2" => 0
 ,"duration" => 3182
 ,"bonus" => "123"
+,"bonus2" => "4"
 );
 // building type 10 level 17
 $config["buildings"][10][17] = array(
@@ -2143,6 +2169,7 @@ $config["buildings"][10][17] = array(
 ,"p2" => 0
 ,"duration" => 4010
 ,"bonus" => "141"
+,"bonus2" => "4"
 );
 // building type 10 level 18
 $config["buildings"][10][18] = array(
@@ -2154,6 +2181,7 @@ $config["buildings"][10][18] = array(
 ,"p2" => 0
 ,"duration" => 5092
 ,"bonus" => "161"
+,"bonus2" => "4"
 );
 // building type 10 level 19
 $config["buildings"][10][19] = array(
@@ -2165,6 +2193,7 @@ $config["buildings"][10][19] = array(
 ,"p2" => 0
 ,"duration" => 6467
 ,"bonus" => "182"
+,"bonus2" => "4"
 );
 // building type 10 level 20
 $config["buildings"][10][20] = array(
@@ -2176,6 +2205,7 @@ $config["buildings"][10][20] = array(
 ,"p2" => 0
 ,"duration" => 8278
 ,"bonus" => "204"
+,"bonus2" => "4"
 );
 // building type 10 level 21
 $config["buildings"][10][21] = array(
@@ -2187,6 +2217,7 @@ $config["buildings"][10][21] = array(
 ,"p2" => 0
 ,"duration" => 10596
 ,"bonus" => "226"
+,"bonus2" => "5"
 );
 // building type 10 level 22
 $config["buildings"][10][22] = array(
@@ -2198,6 +2229,7 @@ $config["buildings"][10][22] = array(
 ,"p2" => 0
 ,"duration" => 13563
 ,"bonus" => "249"
+,"bonus2" => "5"
 );
 // building type 10 level 23
 $config["buildings"][10][23] = array(
@@ -2209,6 +2241,7 @@ $config["buildings"][10][23] = array(
 ,"p2" => 0
 ,"duration" => 17496
 ,"bonus" => "271"
+,"bonus2" => "5"
 );
 // building type 10 level 24
 $config["buildings"][10][24] = array(
@@ -2220,6 +2253,7 @@ $config["buildings"][10][24] = array(
 ,"p2" => 0
 ,"duration" => 22569
 ,"bonus" => "293"
+,"bonus2" => "5"
 );
 // building type 10 level 25
 $config["buildings"][10][25] = array(
@@ -2231,6 +2265,7 @@ $config["buildings"][10][25] = array(
 ,"p2" => 0
 ,"duration" => 29115
 ,"bonus" => "314"
+,"bonus2" => "5"
 );
 // building type 10 level 26
 $config["buildings"][10][26] = array(
@@ -2242,6 +2277,7 @@ $config["buildings"][10][26] = array(
 ,"p2" => 0
 ,"duration" => 37558
 ,"bonus" => "333"
+,"bonus2" => "6"
 );
 // building type 10 level 27
 $config["buildings"][10][27] = array(
@@ -2253,6 +2289,7 @@ $config["buildings"][10][27] = array(
 ,"p2" => 0
 ,"duration" => 48825
 ,"bonus" => "350"
+,"bonus2" => "6"
 );
 // building type 10 level 28
 $config["buildings"][10][28] = array(
@@ -2264,6 +2301,7 @@ $config["buildings"][10][28] = array(
 ,"p2" => 0
 ,"duration" => 63473
 ,"bonus" => "364"
+,"bonus2" => "6"
 );
 // building type 10 level 29
 $config["buildings"][10][29] = array(
@@ -2275,6 +2313,7 @@ $config["buildings"][10][29] = array(
 ,"p2" => 0
 ,"duration" => 82515
 ,"bonus" => "375"
+,"bonus2" => "6"
 );
 // building type 10 level 30
 $config["buildings"][10][30] = array(
@@ -2286,6 +2325,7 @@ $config["buildings"][10][30] = array(
 ,"p2" => 0
 ,"duration" => 107269
 ,"bonus" => "383"
+,"bonus2" => "6"
 );
 // building type 11 level 1
 $config["buildings"][11][1] = array(
@@ -2297,6 +2337,7 @@ $config["buildings"][11][1] = array(
 ,"p2" => 0
 ,"duration" => 0
 ,"bonus" => "5"
+,"bonus2" => "1"
 );
 // building type 11 level 2
 $config["buildings"][11][2] = array(
@@ -2308,6 +2349,7 @@ $config["buildings"][11][2] = array(
 ,"p2" => 0
 ,"duration" => 194
 ,"bonus" => "7"
+,"bonus2" => "1"
 );
 // building type 11 level 3
 $config["buildings"][11][3] = array(
@@ -2319,6 +2361,7 @@ $config["buildings"][11][3] = array(
 ,"p2" => 0
 ,"duration" => 233
 ,"bonus" => "9"
+,"bonus2" => "1"
 );
 // building type 11 level 4
 $config["buildings"][11][4] = array(
@@ -2330,6 +2373,7 @@ $config["buildings"][11][4] = array(
 ,"p2" => 0
 ,"duration" => 282
 ,"bonus" => "12"
+,"bonus2" => "1"
 );
 // building type 11 level 5
 $config["buildings"][11][5] = array(
@@ -2341,6 +2385,7 @@ $config["buildings"][11][5] = array(
 ,"p2" => 0
 ,"duration" => 342
 ,"bonus" => "15"
+,"bonus2" => "1"
 );
 // building type 11 level 6
 $config["buildings"][11][6] = array(
@@ -2352,6 +2397,7 @@ $config["buildings"][11][6] = array(
 ,"p2" => 0
 ,"duration" => 413
 ,"bonus" => "19"
+,"bonus2" => "2"
 );
 // building type 11 level 7
 $config["buildings"][11][7] = array(
@@ -2363,6 +2409,7 @@ $config["buildings"][11][7] = array(
 ,"p2" => 0
 ,"duration" => 504
 ,"bonus" => "24"
+,"bonus2" => "2"
 );
 // building type 11 level 8
 $config["buildings"][11][8] = array(
@@ -2374,6 +2421,7 @@ $config["buildings"][11][8] = array(
 ,"p2" => 0
 ,"duration" => 615
 ,"bonus" => "30"
+,"bonus2" => "2"
 );
 // building type 11 level 9
 $config["buildings"][11][9] = array(
@@ -2385,6 +2433,7 @@ $config["buildings"][11][9] = array(
 ,"p2" => 0
 ,"duration" => 750
 ,"bonus" => "37"
+,"bonus2" => "2"
 );
 // building type 11 level 10
 $config["buildings"][11][10] = array(
@@ -2396,6 +2445,7 @@ $config["buildings"][11][10] = array(
 ,"p2" => 0
 ,"duration" => 923
 ,"bonus" => "45"
+,"bonus2" => "2"
 );
 // building type 11 level 11
 $config["buildings"][11][11] = array(
@@ -2407,6 +2457,7 @@ $config["buildings"][11][11] = array(
 ,"p2" => 0
 ,"duration" => 1135
 ,"bonus" => "54"
+,"bonus2" => "3"
 );
 // building type 11 level 12
 $config["buildings"][11][12] = array(
@@ -2418,6 +2469,7 @@ $config["buildings"][11][12] = array(
 ,"p2" => 0
 ,"duration" => 1408
 ,"bonus" => "65"
+,"bonus2" => "3"
 );
 // building type 11 level 13
 $config["buildings"][11][13] = array(
@@ -2429,6 +2481,7 @@ $config["buildings"][11][13] = array(
 ,"p2" => 0
 ,"duration" => 1746
 ,"bonus" => "77"
+,"bonus2" => "3"
 );
 // building type 11 level 14
 $config["buildings"][11][14] = array(
@@ -2440,6 +2493,7 @@ $config["buildings"][11][14] = array(
 ,"p2" => 0
 ,"duration" => 2182
 ,"bonus" => "91"
+,"bonus2" => "3"
 );
 // building type 11 level 15
 $config["buildings"][11][15] = array(
@@ -2451,6 +2505,7 @@ $config["buildings"][11][15] = array(
 ,"p2" => 0
 ,"duration" => 2728
 ,"bonus" => "106"
+,"bonus2" => "3"
 );
 // building type 11 level 16
 $config["buildings"][11][16] = array(
@@ -2462,6 +2517,7 @@ $config["buildings"][11][16] = array(
 ,"p2" => 0
 ,"duration" => 3437
 ,"bonus" => "123"
+,"bonus2" => "4"
 );
 // building type 11 level 17
 $config["buildings"][11][17] = array(
@@ -2473,6 +2529,7 @@ $config["buildings"][11][17] = array(
 ,"p2" => 0
 ,"duration" => 4330
 ,"bonus" => "141"
+,"bonus2" => "4"
 );
 // building type 11 level 18
 $config["buildings"][11][18] = array(
@@ -2484,6 +2541,7 @@ $config["buildings"][11][18] = array(
 ,"p2" => 0
 ,"duration" => 5500
 ,"bonus" => "161"
+,"bonus2" => "4"
 );
 // building type 11 level 19
 $config["buildings"][11][19] = array(
@@ -2495,6 +2553,7 @@ $config["buildings"][11][19] = array(
 ,"p2" => 0
 ,"duration" => 6984
 ,"bonus" => "182"
+,"bonus2" => "4"
 );
 // building type 11 level 20
 $config["buildings"][11][20] = array(
@@ -2506,6 +2565,7 @@ $config["buildings"][11][20] = array(
 ,"p2" => 0
 ,"duration" => 8940
 ,"bonus" => "204"
+,"bonus2" => "4"
 );
 // building type 11 level 21
 $config["buildings"][11][21] = array(
@@ -2517,6 +2577,7 @@ $config["buildings"][11][21] = array(
 ,"p2" => 0
 ,"duration" => 11443
 ,"bonus" => "226"
+,"bonus2" => "5"
 );
 // building type 11 level 22
 $config["buildings"][11][22] = array(
@@ -2528,6 +2589,7 @@ $config["buildings"][11][22] = array(
 ,"p2" => 0
 ,"duration" => 14648
 ,"bonus" => "249"
+,"bonus2" => "5"
 );
 // building type 11 level 23
 $config["buildings"][11][23] = array(
@@ -2539,6 +2601,7 @@ $config["buildings"][11][23] = array(
 ,"p2" => 0
 ,"duration" => 18895
 ,"bonus" => "271"
+,"bonus2" => "5"
 );
 // building type 11 level 24
 $config["buildings"][11][24] = array(
@@ -2550,6 +2613,7 @@ $config["buildings"][11][24] = array(
 ,"p2" => 0
 ,"duration" => 24375
 ,"bonus" => "293"
+,"bonus2" => "5"
 );
 // building type 11 level 25
 $config["buildings"][11][25] = array(
@@ -2561,6 +2625,7 @@ $config["buildings"][11][25] = array(
 ,"p2" => 0
 ,"duration" => 31444
 ,"bonus" => "314"
+,"bonus2" => "5"
 );
 // building type 11 level 26
 $config["buildings"][11][26] = array(
@@ -2572,6 +2637,7 @@ $config["buildings"][11][26] = array(
 ,"p2" => 0
 ,"duration" => 40562
 ,"bonus" => "333"
+,"bonus2" => "6"
 );
 // building type 11 level 27
 $config["buildings"][11][27] = array(
@@ -2583,6 +2649,7 @@ $config["buildings"][11][27] = array(
 ,"p2" => 0
 ,"duration" => 52731
 ,"bonus" => "350"
+,"bonus2" => "6"
 );
 // building type 11 level 28
 $config["buildings"][11][28] = array(
@@ -2594,6 +2661,7 @@ $config["buildings"][11][28] = array(
 ,"p2" => 0
 ,"duration" => 68551
 ,"bonus" => "364"
+,"bonus2" => "6"
 );
 // building type 11 level 29
 $config["buildings"][11][29] = array(
@@ -2605,6 +2673,7 @@ $config["buildings"][11][29] = array(
 ,"p2" => 0
 ,"duration" => 89116
 ,"bonus" => "375"
+,"bonus2" => "6"
 );
 // building type 11 level 30
 $config["buildings"][11][30] = array(
@@ -2616,6 +2685,7 @@ $config["buildings"][11][30] = array(
 ,"p2" => 0
 ,"duration" => 115850
 ,"bonus" => "383"
+,"bonus2" => "6"
 );
 // building type 12 level 1
 $config["buildings"][12][1] = array(
@@ -2627,6 +2697,7 @@ $config["buildings"][12][1] = array(
 ,"p2" => 0
 ,"duration" => 0
 ,"bonus" => "5"
+,"bonus2" => "1"
 );
 // building type 12 level 2
 $config["buildings"][12][2] = array(
@@ -2638,6 +2709,7 @@ $config["buildings"][12][2] = array(
 ,"p2" => 0
 ,"duration" => 216
 ,"bonus" => "7"
+,"bonus2" => "1"
 );
 // building type 12 level 3
 $config["buildings"][12][3] = array(
@@ -2649,6 +2721,7 @@ $config["buildings"][12][3] = array(
 ,"p2" => 0
 ,"duration" => 259
 ,"bonus" => "9"
+,"bonus2" => "1"
 );
 // building type 12 level 4
 $config["buildings"][12][4] = array(
@@ -2660,6 +2733,7 @@ $config["buildings"][12][4] = array(
 ,"p2" => 0
 ,"duration" => 314
 ,"bonus" => "12"
+,"bonus2" => "1"
 );
 // building type 12 level 5
 $config["buildings"][12][5] = array(
@@ -2671,6 +2745,7 @@ $config["buildings"][12][5] = array(
 ,"p2" => 0
 ,"duration" => 379
 ,"bonus" => "15"
+,"bonus2" => "1"
 );
 // building type 12 level 6
 $config["buildings"][12][6] = array(
@@ -2682,6 +2757,7 @@ $config["buildings"][12][6] = array(
 ,"p2" => 0
 ,"duration" => 459
 ,"bonus" => "19"
+,"bonus2" => "2"
 );
 // building type 12 level 7
 $config["buildings"][12][7] = array(
@@ -2693,6 +2769,7 @@ $config["buildings"][12][7] = array(
 ,"p2" => 0
 ,"duration" => 560
 ,"bonus" => "24"
+,"bonus2" => "2"
 );
 // building type 12 level 8
 $config["buildings"][12][8] = array(
@@ -2704,6 +2781,7 @@ $config["buildings"][12][8] = array(
 ,"p2" => 0
 ,"duration" => 683
 ,"bonus" => "30"
+,"bonus2" => "2"
 );
 // building type 12 level 9
 $config["buildings"][12][9] = array(
@@ -2715,6 +2793,7 @@ $config["buildings"][12][9] = array(
 ,"p2" => 0
 ,"duration" => 834
 ,"bonus" => "37"
+,"bonus2" => "2"
 );
 // building type 12 level 10
 $config["buildings"][12][10] = array(
@@ -2726,6 +2805,7 @@ $config["buildings"][12][10] = array(
 ,"p2" => 0
 ,"duration" => 1026
 ,"bonus" => "45"
+,"bonus2" => "2"
 );
 // building type 12 level 11
 $config["buildings"][12][11] = array(
@@ -2737,6 +2817,7 @@ $config["buildings"][12][11] = array(
 ,"p2" => 0
 ,"duration" => 1261
 ,"bonus" => "54"
+,"bonus2" => "3"
 );
 // building type 12 level 12
 $config["buildings"][12][12] = array(
@@ -2748,6 +2829,7 @@ $config["buildings"][12][12] = array(
 ,"p2" => 0
 ,"duration" => 1564
 ,"bonus" => "65"
+,"bonus2" => "3"
 );
 // building type 12 level 13
 $config["buildings"][12][13] = array(
@@ -2759,6 +2841,7 @@ $config["buildings"][12][13] = array(
 ,"p2" => 0
 ,"duration" => 1940
 ,"bonus" => "77"
+,"bonus2" => "3"
 );
 // building type 12 level 14
 $config["buildings"][12][14] = array(
@@ -2770,6 +2853,7 @@ $config["buildings"][12][14] = array(
 ,"p2" => 0
 ,"duration" => 2425
 ,"bonus" => "91"
+,"bonus2" => "3"
 );
 // building type 12 level 15
 $config["buildings"][12][15] = array(
@@ -2781,6 +2865,7 @@ $config["buildings"][12][15] = array(
 ,"p2" => 0
 ,"duration" => 3031
 ,"bonus" => "106"
+,"bonus2" => "3"
 );
 // building type 12 level 16
 $config["buildings"][12][16] = array(
@@ -2792,6 +2877,7 @@ $config["buildings"][12][16] = array(
 ,"p2" => 0
 ,"duration" => 3819
 ,"bonus" => "123"
+,"bonus2" => "4"
 );
 // building type 12 level 17
 $config["buildings"][12][17] = array(
@@ -2803,6 +2889,7 @@ $config["buildings"][12][17] = array(
 ,"p2" => 0
 ,"duration" => 4812
 ,"bonus" => "141"
+,"bonus2" => "4"
 );
 // building type 12 level 18
 $config["buildings"][12][18] = array(
@@ -2814,6 +2901,7 @@ $config["buildings"][12][18] = array(
 ,"p2" => 0
 ,"duration" => 6111
 ,"bonus" => "161"
+,"bonus2" => "4"
 );
 // building type 12 level 19
 $config["buildings"][12][19] = array(
@@ -2825,6 +2913,7 @@ $config["buildings"][12][19] = array(
 ,"p2" => 0
 ,"duration" => 7761
 ,"bonus" => "182"
+,"bonus2" => "4"
 );
 // building type 12 level 20
 $config["buildings"][12][20] = array(
@@ -2836,6 +2925,7 @@ $config["buildings"][12][20] = array(
 ,"p2" => 0
 ,"duration" => 9934
 ,"bonus" => "204"
+,"bonus2" => "4"
 );
 // building type 12 level 21
 $config["buildings"][12][21] = array(
@@ -2847,6 +2937,7 @@ $config["buildings"][12][21] = array(
 ,"p2" => 0
 ,"duration" => 12715
 ,"bonus" => "226"
+,"bonus2" => "5"
 );
 // building type 12 level 22
 $config["buildings"][12][22] = array(
@@ -2858,6 +2949,7 @@ $config["buildings"][12][22] = array(
 ,"p2" => 0
 ,"duration" => 16275
 ,"bonus" => "249"
+,"bonus2" => "5"
 );
 // building type 12 level 23
 $config["buildings"][12][23] = array(
@@ -2869,6 +2961,7 @@ $config["buildings"][12][23] = array(
 ,"p2" => 0
 ,"duration" => 20995
 ,"bonus" => "271"
+,"bonus2" => "5"
 );
 // building type 12 level 24
 $config["buildings"][12][24] = array(
@@ -2880,6 +2973,7 @@ $config["buildings"][12][24] = array(
 ,"p2" => 0
 ,"duration" => 27083
 ,"bonus" => "293"
+,"bonus2" => "5"
 );
 // building type 12 level 25
 $config["buildings"][12][25] = array(
@@ -2891,6 +2985,7 @@ $config["buildings"][12][25] = array(
 ,"p2" => 0
 ,"duration" => 34937
 ,"bonus" => "314"
+,"bonus2" => "5"
 );
 // building type 12 level 26
 $config["buildings"][12][26] = array(
@@ -2902,6 +2997,7 @@ $config["buildings"][12][26] = array(
 ,"p2" => 0
 ,"duration" => 45069
 ,"bonus" => "333"
+,"bonus2" => "6"
 );
 // building type 12 level 27
 $config["buildings"][12][27] = array(
@@ -2913,6 +3009,7 @@ $config["buildings"][12][27] = array(
 ,"p2" => 0
 ,"duration" => 58590
 ,"bonus" => "350"
+,"bonus2" => "6"
 );
 // building type 12 level 28
 $config["buildings"][12][28] = array(
@@ -2924,6 +3021,7 @@ $config["buildings"][12][28] = array(
 ,"p2" => 0
 ,"duration" => 76167
 ,"bonus" => "364"
+,"bonus2" => "6"
 );
 // building type 12 level 29
 $config["buildings"][12][29] = array(
@@ -2935,6 +3033,7 @@ $config["buildings"][12][29] = array(
 ,"p2" => 0
 ,"duration" => 99017
 ,"bonus" => "375"
+,"bonus2" => "6"
 );
 // building type 12 level 30
 $config["buildings"][12][30] = array(
@@ -2946,5 +3045,6 @@ $config["buildings"][12][30] = array(
 ,"p2" => 0
 ,"duration" => 128723
 ,"bonus" => "383"
+,"bonus2" => "6"
 );
 ?>

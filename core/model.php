@@ -367,6 +367,9 @@ abstract class BuildingTypes {
 	const StoreB1 = 7;
 	const StoreB2 = 8;
 	const StoreB3 = 9;
+	const Fortifications = 6;
+	const Farm = 4;
+	const Keep = 0;
 }
 
 /**
@@ -449,6 +452,7 @@ class Camp extends BaseModel {
 	public $b3;
 	public $p1;
 	public $p2;
+	public $people;
 	public $points;
 	public $properties;
 	
