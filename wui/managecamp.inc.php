@@ -3,8 +3,11 @@ $id = $_GET["id"];
 
 if (isset($_GET["buildingId"])) {
 	$buildingId = $_GET["buildingId"];
-	$service->queueUpgradeBuilding($buildingId);
-	
+	try {
+		$service->queueUpgradeBuilding($buildingId);
+	} catch (Exception $ex) {
+		echoException($ex);
+	}
 }
 
 $camp = $service->getCamp($id);
@@ -18,7 +21,7 @@ $tasks = $service->getCampQueue($id);
 	<?php
 	echo "<div class=\"panel panel-default\">";
 	echo "<div class=\"panel-heading\">";
-	echo $camp->name." (id: ".$camp->campId.")";
+	echo "<a href=\"?page=managecamp&id=".$camp->campId."\">".$camp->name."</a> (id: ".$camp->campId.")";
 	echo "b1: ".$camp->b1."/".$camp->properties->sb1."&nbsp;|&nbsp;";
 	echo "b2: ".$camp->b2."/".$camp->properties->sb2."&nbsp;|&nbsp;";
 	echo "b3: ".$camp->b3."/".$camp->properties->sb3."&nbsp;|&nbsp;";

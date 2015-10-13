@@ -1,5 +1,10 @@
 <?php
-
+function echoException($ex) {
+	echo "<div class=\"alert alert-danger\" role=\"alert\">";
+	//var_dump($ex);
+	echo $ex->getMessage();
+	echo "</div>";
+}
 function echoPlayer($player) {
 	echo "<a href=\"index.php?page=player&id=".$player->playerId."\">".$player->name." (".$player->points.")</a>";
 }

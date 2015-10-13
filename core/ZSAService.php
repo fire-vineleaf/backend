@@ -491,6 +491,21 @@ class ZSAService extends BaseService {
 	}
 
 	private function payCamp($camp, $b1, $b2, $b3, $p1, $p2) {
+		if ($camp->b1 < $b1) {
+			throw new WebApiException("strNotEnoughRessources");
+		}
+		if ($camp->b2 < $b2) {
+			throw new WebApiException("strNotEnoughRessources");
+		}
+		if ($camp->b3 < $b3) {
+			throw new WebApiException("strNotEnoughRessources");
+		}
+		if ($camp->p1 < $p1) {
+			throw new WebApiException("strNotEnoughRessources");
+		}
+		if ($camp->p2 < $p2) {
+			throw new WebApiException("strNotEnoughRessources");
+		}
 		$camp->b1 -= $b1;
 		$camp->b2 -= $b2;
 		$camp->b3 -= $b3;
@@ -598,6 +613,7 @@ class ZSAService extends BaseService {
 					$camp->p1 = 0;
 					$camp->p2 = 0;
 					$camp->points = 0;
+					$camp->people = $this->config["initial"]["numPeople"];
 					
 					$properties = array();
 					$properties["sb1"] = 0;

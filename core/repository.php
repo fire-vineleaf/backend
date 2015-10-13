@@ -96,7 +96,7 @@ public function getAccountByEmail($email) {
  * @return Array
  */
 public function getCampBuildings($campId) {
-	$query = "SELECT building_id, camp_id, type, level FROM buildings WHERE camp_id = ?";
+	$query = "SELECT building_id, camp_id, type, level, people FROM buildings WHERE camp_id = ?";
 	$stmt = $this->mysqli->prepare($query);
 	if ($stmt === false) {
 		throw new RepositoryException($this->mysqli->error, $this->mysqli->errno);
@@ -109,7 +109,7 @@ public function getCampBuildings($campId) {
 		throw new RepositoryException($stmt->error, $stmt->errno);
 	}
 	$a = array();
-	$rc = $stmt->bind_result($a["buildingId"], $a["campId"], $a["type"], $a["level"]);
+	$rc = $stmt->bind_result($a["buildingId"], $a["campId"], $a["type"], $a["level"], $a["people"]);
 	if ($rc === false) {
 		throw new RepositoryException($stmt->error, $stmt->errno);
 	}
@@ -126,13 +126,13 @@ public function getCampBuildings($campId) {
  * @return Building 
  */	
 public function getBuildingById($id) {
-	$query = "SELECT building_id, camp_id, type, level FROM buildings where building_id = ?";
+	$query = "SELECT building_id, camp_id, type, level, people FROM buildings where building_id = ?";
 	$stmt = $this->prepare($query);
 	$rc = $stmt->bind_param("i", $id);
 	$this->checkBind($rc);
 	$stmt = $this->execute($stmt);
 	$a = array();
-	$rc = $stmt->bind_result($a["buildingId"], $a["campId"], $a["type"], $a["level"]);
+	$rc = $stmt->bind_result($a["buildingId"], $a["campId"], $a["type"], $a["level"], $a["people"]);
 	$this->checkBind($rc);
 	if ($stmt->fetch()) {
 		return Building::CreateModelFromRepositoryArray($a);
@@ -979,12 +979,13 @@ public function createCamp($model) {
  * @return Building 
  */	
 public function createBuilding($model) {
-	$query = "INSERT INTO buildings (camp_id, type, level) VALUES ( ?, ?, ?)";
+	$query = "INSERT INTO buildings (camp_id, type, level, people) VALUES (?, ?, ?, ?)";
 	$stmt = $this->prepare($query);
-	$rc = $stmt->bind_param("iii"
+	$rc = $stmt->bind_param("iiii"
 		, $model->campId
 , $model->type
 , $model->level
+, $model->people
 	);
 	$this->checkBind($rc);
 	$stmt = $this->execute($stmt);

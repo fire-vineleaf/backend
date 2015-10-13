@@ -2,7 +2,7 @@
 
 require_once("buildings.inc.php");
 $config["isTest"] = true;
-
+$config["initial"]["numPeople"] = 3;
 /*
 // building type 0 level 1
 $config["buildings"][0][2] = array(

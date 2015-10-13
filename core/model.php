@@ -471,6 +471,7 @@ class Building extends BaseModel  {
 	public $buildingId;
 	public $campId;
 	public $type;
+	public $people;
 	public $level;
 }
 
