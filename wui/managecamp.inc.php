@@ -49,8 +49,10 @@ $tasks = $service->getCampQueue($id);
 	echo "</div>";
 	?>
 	</div>
-	<div class="col-md-5">
+	<div class="col-md-3">
 	<?php var_dump($camp->properties);?>
+	</div>
+	<div class="col-md-4">
 	<ul>
 	<?php
 	foreach ($tasks as $t) {
