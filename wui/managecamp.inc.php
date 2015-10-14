@@ -39,7 +39,37 @@ $tasks = $service->getCampQueue($id);
 
 		if (isset($config["buildings"][$b->type][$b->level])) {
 			$c = $config["buildings"][$b->type][$b->level];
-			echo $c["bonus"];
+			echo "&nbsp;";
+			switch ($b->type) {
+				case BuildingTypes::ProducerB1:
+				echo $c["bonus"]." B1/h";
+				echo "&nbsp;&nbsp;People: ".$b->people;
+				break;
+				case BuildingTypes::ProducerB2:
+				echo $c["bonus"]." B2/h";
+				echo "&nbsp;&nbsp;People: ".$b->people;
+				break;
+				case BuildingTypes::ProducerB3:
+				echo $c["bonus"]." B3/h";
+				echo "&nbsp;&nbsp;People: ".$b->people;
+				break;
+				case BuildingTypes::StoreB1:
+				echo $c["bonus"]." B1";
+				break;
+				case BuildingTypes::StoreB2:
+				echo $c["bonus"]." B2";
+				break;
+				case BuildingTypes::StoreB3:
+				echo $c["bonus"]." B3";
+				break;
+				case BuildingTypes::Fortifications:
+				echo "+".$c["bonus"]."%";
+				break;
+				default:
+				echo "Effekt: ". $c["bonus"];
+				break;
+			}
+			
 		}
 
 		if (isset($config["buildings"][$b->type][$b->level+1])) {

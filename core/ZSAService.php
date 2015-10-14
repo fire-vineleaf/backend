@@ -100,16 +100,27 @@ class ZSAService extends BaseService {
 			$building->type = $i;
 			$building->campId = $camp->campId;
 			$building->level = 1;
+			switch ($building->type) {
+				case BuildingTypes::ProducerB1:
+				$building->people = 1;				
+				$campProperties->pavail -= 1;
+				break;
+				case BuildingTypes::ProducerB2:
+				$building->people = 1;				
+				$campProperties->pavail -= 1;
+				break;
+				case BuildingTypes::ProducerB3:
+				$building->people = 1;				
+				$campProperties->pavail -= 1;
+				break;
+			}
 			$building = $this->repository->createBuilding($building);
-			$campProperties = $this->updateCampProperties($campProperties, $building->type, $building->level);
+			$campProperties = $this->updateCampProperties($campProperties, $building, $building->level);
 		}
 		$camp->properties = $campProperties;
 		$camp = $this->repository->updateCampProperties($camp);
 		return $camp;
-	}
-	
-	
-	
+	}	
 	
 	/**
 	 * Creates a new Field 
@@ -554,7 +565,7 @@ class ZSAService extends BaseService {
 		$camp->points++;
 		$camp = $this->repository->updateCampPoints($camp);
 		
-		$camp->properties = $this->updateCampProperties($camp->properties, $building->type, $task->level);
+		$camp->properties = $this->updateCampProperties($camp->properties, $building, $task->level);
 		$camp = $this->repository->updateCampProperties($camp);
 	}
 	
@@ -628,6 +639,7 @@ class ZSAService extends BaseService {
 					$properties["maxb2"] = 0; // max people producing B2
 					$properties["maxb3"] = 0; // max people producing B3
 					$properties["prec"] = 0; // bonus for recruiting persons, coming from keep
+					$properties["pavail"] = $camp->people; // people available
 					$camp->properties = json_decode(json_encode($properties));
 					$camp = $this->createCamp($camp);
 
@@ -641,7 +653,8 @@ class ZSAService extends BaseService {
 		return $numCamps;
 	}
 
-	private function updateCampProperties($campProperties, $type, $level) {
+	private function updateCampProperties($campProperties, $building, $level) {
+		$type = $building->type;
 		switch ($type) {
 			case BuildingTypes::ProducerB1:
 			$campProperties->pb1 = $this->config["buildings"][$type][$level]["bonus"];
